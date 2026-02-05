@@ -1,0 +1,20 @@
+{
+  "name": "dscore-cli",
+  "version": "0.1.0",
+  "description": "DSCORE CLI Tools",
+  "bin": {
+    "dscore-cli": "./bin/dscore-cli.js"
+  },
+  "files": [
+    "bin"
+  ],
+  "keywords": [
+    "dscore",
+    "cli",
+    "generator"
+  ],
+  "license": "UNLICENSED",
+  "publishConfig": {
+    "registry": "https://nexus-tiu.ktds.co.kr/repository/npm-private/"
+  }
+}
