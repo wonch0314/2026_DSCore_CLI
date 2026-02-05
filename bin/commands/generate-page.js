@@ -104,7 +104,6 @@ const generatePage = (pageName, framework, directory) => {
     const pascalName = toPascalCase(pageName);
     const camelName = toCamelCase(pageName);
     const targetDir = path.join(CWD, `src/${directory}`, pageName);
-    const ext = framework === 'vue' ? 'vue' : 'jsx';
 
     console.log('');
     console.log(`🚀  Creating ${framework.toUpperCase()} page structure for "${pageName}"...`);
@@ -153,12 +152,21 @@ const writeVueFiles = (targetDir, pascalName, templates) => {
 
     fs.writeFileSync(path.join(targetDir, `components/${pascalName}List.vue`), templates.list);
     console.log(`   ✅  components/${pascalName}List.vue`);
+
+    fs.writeFileSync(path.join(targetDir, 'components/BaseTable.vue'), templates.baseTable);
+    console.log('   ✅  components/BaseTable.vue');
+
+    fs.writeFileSync(path.join(targetDir, 'components/BasePagination.vue'), templates.basePagination);
+    console.log('   ✅  components/BasePagination.vue');
 };
 
 // React 파일 쓰기
 const writeReactFiles = (targetDir, pascalName, templates) => {
     fs.writeFileSync(path.join(targetDir, `${pascalName}Page.jsx`), templates.page);
     console.log(`   ✅  ${pascalName}Page.jsx`);
+
+    fs.writeFileSync(path.join(targetDir, `${pascalName}Page.module.css`), templates.pageStyles);
+    console.log(`   ✅  ${pascalName}Page.module.css`);
 
     fs.writeFileSync(path.join(targetDir, 'components/constants.js'), templates.constants);
     console.log('   ✅  components/constants.js');
@@ -172,8 +180,26 @@ const writeReactFiles = (targetDir, pascalName, templates) => {
     fs.writeFileSync(path.join(targetDir, `components/ui/${pascalName}Search.jsx`), templates.search);
     console.log(`   ✅  components/ui/${pascalName}Search.jsx`);
 
+    fs.writeFileSync(path.join(targetDir, `components/ui/${pascalName}Search.module.css`), templates.searchStyles);
+    console.log(`   ✅  components/ui/${pascalName}Search.module.css`);
+
     fs.writeFileSync(path.join(targetDir, `components/ui/${pascalName}List.jsx`), templates.list);
     console.log(`   ✅  components/ui/${pascalName}List.jsx`);
+
+    fs.writeFileSync(path.join(targetDir, `components/ui/${pascalName}List.module.css`), templates.listStyles);
+    console.log(`   ✅  components/ui/${pascalName}List.module.css`);
+
+    fs.writeFileSync(path.join(targetDir, 'components/ui/BaseTable.jsx'), templates.baseTable);
+    console.log('   ✅  components/ui/BaseTable.jsx');
+
+    fs.writeFileSync(path.join(targetDir, 'components/ui/BaseTable.module.css'), templates.baseTableStyles);
+    console.log('   ✅  components/ui/BaseTable.module.css');
+
+    fs.writeFileSync(path.join(targetDir, 'components/ui/BasePagination.jsx'), templates.basePagination);
+    console.log('   ✅  components/ui/BasePagination.jsx');
+
+    fs.writeFileSync(path.join(targetDir, 'components/ui/BasePagination.module.css'), templates.basePaginationStyles);
+    console.log('   ✅  components/ui/BasePagination.module.css');
 };
 
 // 완료 메시지
@@ -197,6 +223,8 @@ const showCompletionMessage = (pageName, pascalName, framework, directory) => {
     console.log(`║     • ${hookDir}/use${pascalName}.js`.padEnd(58) + '║');
     console.log(`║     • ${compDir}/${pascalName}Search${ext}`.padEnd(58) + '║');
     console.log(`║     • ${compDir}/${pascalName}List${ext}`.padEnd(58) + '║');
+    console.log(`║     • ${compDir}/BaseTable${ext}`.padEnd(58) + '║');
+    console.log(`║     • ${compDir}/BasePagination${ext}`.padEnd(58) + '║');
     console.log('║                                                           ║');
     console.log('╠═══════════════════════════════════════════════════════════╣');
     console.log('║  👉 다음 단계:                                              ║');
@@ -268,17 +296,31 @@ export const UI_TEXT = {
 
     api: `/**
  * ${pascalName} API 함수
+ *
+ * TODO: 실제 API 경로로 수정 필요
  */
-import { api } from '@/api';
+
+const API_BASE_URL = '/api';
 
 /**
  * 옵션 목록 조회 (셀렉트박스용)
  */
 export const getOption = async () => {
-    // TODO: API 경로 수정 필요
-    // const res = await api.get('/${camelName}/options');
-    // return res.data;
-    return { result: true, data: {} };
+    // TODO: 실제 API 연동 시 주석 해제
+    // const res = await fetch(\`\${API_BASE_URL}/${camelName}/options\`);
+    // return await res.json();
+
+    // Mock 데이터
+    return {
+        result: true,
+        data: {
+            statusList: [
+                { label: '전체', value: '' },
+                { label: '활성', value: 'active' },
+                { label: '비활성', value: 'inactive' },
+            ]
+        }
+    };
 };
 
 /**
@@ -286,9 +328,22 @@ export const getOption = async () => {
  * @param {Object} params - 검색 파라미터
  */
 export const get${pascalName}List = async (params) => {
-    // TODO: API 경로 수정 필요
-    const res = await api.get('/${camelName}/list', { params });
-    return res.data;
+    // TODO: 실제 API 연동 시 주석 해제
+    // const queryParams = new URLSearchParams(params).toString();
+    // const res = await fetch(\`\${API_BASE_URL}/${camelName}/list?\${queryParams}\`);
+    // return await res.json();
+
+    // Mock 데이터
+    return {
+        result: true,
+        data: {
+            list: [
+                { id: '1', name: '샘플 데이터 1', status: 'active', regDt: '2024-01-01' },
+                { id: '2', name: '샘플 데이터 2', status: 'inactive', regDt: '2024-01-02' },
+            ],
+            totalCount: 2
+        }
+    };
 };
 
 /**
@@ -296,8 +351,8 @@ export const get${pascalName}List = async (params) => {
  * @param {string} id - 조회할 ID
  */
 export const get${pascalName} = async (id) => {
-    const res = await api.get(\`/${camelName}/\${id}\`);
-    return res.data;
+    const res = await fetch(\`\${API_BASE_URL}/${camelName}/\${id}\`);
+    return await res.json();
 };
 
 /**
@@ -305,8 +360,12 @@ export const get${pascalName} = async (id) => {
  * @param {Object} data - 등록할 데이터
  */
 export const add${pascalName} = async (data) => {
-    const res = await api.post('/${camelName}', data);
-    return res.data;
+    const res = await fetch(\`\${API_BASE_URL}/${camelName}\`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+    return await res.json();
 };
 
 /**
@@ -314,8 +373,12 @@ export const add${pascalName} = async (data) => {
  * @param {Object} data - 수정할 데이터
  */
 export const update${pascalName} = async (data) => {
-    const res = await api.put('/${camelName}', data);
-    return res.data;
+    const res = await fetch(\`\${API_BASE_URL}/${camelName}\`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+    return await res.json();
 };
 
 /**
@@ -323,8 +386,10 @@ export const update${pascalName} = async (data) => {
  * @param {string} id - 삭제할 ID
  */
 export const delete${pascalName} = async (id) => {
-    const res = await api.delete(\`/${camelName}/\${id}\`);
-    return res.data;
+    const res = await fetch(\`\${API_BASE_URL}/${camelName}/\${id}\`, {
+        method: 'DELETE',
+    });
+    return await res.json();
 };
 `,
 
@@ -332,7 +397,6 @@ export const delete${pascalName} = async (id) => {
  * ${pascalName} 페이지 컴포저블
  */
 import { ref, reactive, onMounted } from 'vue';
-import { useAlert } from '@/composables/useAlert';
 import { getOption, get${pascalName}List } from '../api';
 import {
     INITIAL_SEARCH_STATE,
@@ -341,8 +405,6 @@ import {
 } from '../constants';
 
 export const use${pascalName} = () => {
-    const { alert } = useAlert();
-
     // 옵션 상태
     const options = ref({});
 
@@ -389,11 +451,11 @@ export const use${pascalName} = () => {
                 listData.totalCount = res.data?.totalCount || 0;
                 pageState.totalCount = res.data?.totalCount || 0;
             } else {
-                alert({ message: ERROR_MESSAGES.FETCH_FAILED });
+                alert(ERROR_MESSAGES.FETCH_FAILED);
             }
         } catch (error) {
             console.error('Failed to fetch list:', error);
-            alert({ message: ERROR_MESSAGES.FETCH_FAILED });
+            alert(ERROR_MESSAGES.FETCH_FAILED);
         } finally {
             isLoading.value = false;
         }
@@ -458,10 +520,16 @@ export const use${pascalName} = () => {
 
     page: `<template>
     <div class="${pageName}-page">
-        <ContentTitle
-            title="${pascalName} 관리"
-            :breadcrumb="['업무지원', '시스템 관리', '${pascalName} 관리']"
-        />
+        <div class="page-header">
+            <h1 class="page-title">${pascalName} 관리</h1>
+            <div class="breadcrumb">
+                <span>업무지원</span>
+                <span class="separator">/</span>
+                <span>시스템 관리</span>
+                <span class="separator">/</span>
+                <span class="current">${pascalName} 관리</span>
+            </div>
+        </div>
 
         <!-- 검색 컴포넌트 -->
         <${pascalName}Search
@@ -486,7 +554,6 @@ export const use${pascalName} = () => {
 /**
  * ${pascalName} 페이지
  */
-import ContentTitle from '@/components/common/ContentTitle.vue';
 import ${pascalName}Search from './components/${pascalName}Search.vue';
 import ${pascalName}List from './components/${pascalName}List.vue';
 import { use${pascalName} } from './composables/use${pascalName}';
@@ -508,32 +575,64 @@ const {
 .${pageName}-page {
     padding: 20px;
 }
+
+.page-header {
+    margin-bottom: 24px;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+}
+
+.breadcrumb {
+    font-size: 14px;
+    color: #666;
+}
+
+.breadcrumb .separator {
+    margin: 0 8px;
+}
+
+.breadcrumb .current {
+    color: #333;
+    font-weight: 500;
+}
 </style>
 `,
 
     search: `<template>
     <div class="${pageName}-search">
         <div class="search-row">
-            <Input
-                v-model="localSearchState.keyword"
-                label="검색어"
-                placeholder="검색어를 입력하세요"
-                @keydown.enter="handleSearch"
-            />
+            <div class="search-field">
+                <label class="field-label">검색어</label>
+                <input
+                    v-model="localSearchState.keyword"
+                    type="text"
+                    class="field-input"
+                    placeholder="검색어를 입력하세요"
+                    @keydown.enter="handleSearch"
+                />
+            </div>
 
-            <!-- 셀렉트박스 예시 -->
-            <!-- <Select
-                v-model="localSearchState.status"
-                label="상태"
-                :options="options.statusList || []"
-            /> -->
+            <div class="search-field">
+                <label class="field-label">상태</label>
+                <select v-model="localSearchState.status" class="field-select">
+                    <option v-for="opt in (options.statusList || [])" :key="opt.value" :value="opt.value">
+                        {{ opt.label }}
+                    </option>
+                </select>
+            </div>
 
-            <Button variant="primary" @click="handleSearch">
-                {{ UI_TEXT.SEARCH }}
-            </Button>
-            <Button variant="secondary" @click="handleReset">
-                {{ UI_TEXT.RESET }}
-            </Button>
+            <div class="search-buttons">
+                <button type="button" class="btn btn-primary" @click="handleSearch">
+                    {{ UI_TEXT.SEARCH }}
+                </button>
+                <button type="button" class="btn btn-secondary" @click="handleReset">
+                    {{ UI_TEXT.RESET }}
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -576,13 +675,77 @@ const handleReset = () => {
 
 <style scoped>
 .${pageName}-search {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
     margin-bottom: 20px;
 }
 
 .search-row {
     display: flex;
-    gap: 12px;
-    align-items: center;
+    gap: 16px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.search-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.field-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.field-input,
+.field-select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    min-width: 200px;
+}
+
+.field-input:focus,
+.field-select:focus {
+    outline: none;
+    border-color: #1976d2;
+}
+
+.search-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-primary {
+    background: #1976d2;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #1565c0;
+}
+
+.btn-secondary {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background: #d0d0d0;
 }
 </style>
 `,
@@ -590,21 +753,20 @@ const handleReset = () => {
     list: `<template>
     <div class="${pageName}-list">
         <div class="list-header">
-            <span>총 {{ data.totalCount }}건</span>
-            <Button variant="primary" @click="handleOpenRegist">
+            <span class="total-count">총 {{ data.totalCount }}건</span>
+            <button type="button" class="btn btn-primary" @click="handleOpenRegist">
                 {{ UI_TEXT.REGISTER }}
-            </Button>
+            </button>
         </div>
 
-        <Table
+        <BaseTable
             :headers="TABLE_HEADERS"
             :data="data.list"
             :loading="isLoading"
-            empty-message="데이터가 없습니다."
             @row-click="handleRowClick"
         />
 
-        <Pagination
+        <BasePagination
             :current="pageState.page"
             :total="data.totalCount"
             :page-size="pageState.size"
@@ -618,9 +780,11 @@ const handleReset = () => {
 /**
  * ${pascalName} 목록 컴포넌트
  */
+import BaseTable from './BaseTable.vue';
+import BasePagination from './BasePagination.vue';
 import { TABLE_HEADERS, UI_TEXT } from '../constants';
 
-const props = defineProps({
+defineProps({
     data: {
         type: Object,
         default: () => ({ list: [], totalCount: 0 }),
@@ -656,15 +820,301 @@ const handleOpenRegist = () => {
 
 <style scoped>
 .${pageName}-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
 }
 
 .list-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 16px;
+}
+
+.total-count {
+    font-size: 14px;
+    color: #666;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #1976d2;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #1565c0;
+}
+</style>
+`,
+
+    baseTable: `<template>
+    <div class="base-table">
+        <div v-if="loading" class="loading-overlay">
+            <span>로딩 중...</span>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th
+                        v-for="header in headers"
+                        :key="header.name"
+                        :style="{ width: header.width + 'px', textAlign: header.align }"
+                    >
+                        {{ header.header }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-if="data.length === 0">
+                    <td :colspan="headers.length" class="empty-message">
+                        데이터가 없습니다.
+                    </td>
+                </tr>
+                <tr
+                    v-for="(row, index) in data"
+                    :key="index"
+                    class="table-row"
+                    @click="$emit('row-click', row)"
+                >
+                    <td
+                        v-for="header in headers"
+                        :key="header.name"
+                        :style="{ textAlign: header.align }"
+                    >
+                        {{ row[header.name] }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</template>
+
+<script setup>
+defineProps({
+    headers: {
+        type: Array,
+        required: true,
+    },
+    data: {
+        type: Array,
+        default: () => [],
+    },
+    loading: {
+        type: Boolean,
+        default: false,
+    },
+});
+
+defineEmits(['row-click']);
+</script>
+
+<style scoped>
+.base-table {
+    position: relative;
+    overflow-x: auto;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.table th {
+    background: #f5f5f5;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.table td {
+    font-size: 14px;
+}
+
+.table-row {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.table-row:hover {
+    background: #f9f9f9;
+}
+
+.empty-message {
+    text-align: center;
+    color: #999;
+    padding: 40px !important;
+}
+</style>
+`,
+
+    basePagination: `<template>
+    <div class="base-pagination">
+        <div class="page-size-selector">
+            <select :value="pageSize" @change="handlePageSizeChange">
+                <option v-for="size in pageSizes" :key="size" :value="size">
+                    {{ size }}개씩 보기
+                </option>
+            </select>
+        </div>
+
+        <div class="pagination-buttons">
+            <button
+                type="button"
+                class="page-btn"
+                :disabled="current === 1"
+                @click="handlePageChange(current - 1)"
+            >
+                이전
+            </button>
+
+            <button
+                v-for="page in visiblePages"
+                :key="page"
+                type="button"
+                class="page-btn"
+                :class="{ active: page === current }"
+                @click="handlePageChange(page)"
+            >
+                {{ page }}
+            </button>
+
+            <button
+                type="button"
+                class="page-btn"
+                :disabled="current === totalPages"
+                @click="handlePageChange(current + 1)"
+            >
+                다음
+            </button>
+        </div>
+    </div>
+</template>
+
+<script setup>
+import { computed } from 'vue';
+
+const props = defineProps({
+    current: {
+        type: Number,
+        default: 1,
+    },
+    total: {
+        type: Number,
+        default: 0,
+    },
+    pageSize: {
+        type: Number,
+        default: 10,
+    },
+});
+
+const emit = defineEmits(['change', 'page-size-change']);
+
+const pageSizes = [10, 20, 50, 100];
+
+const totalPages = computed(() => Math.ceil(props.total / props.pageSize) || 1);
+
+const visiblePages = computed(() => {
+    const pages = [];
+    const maxVisible = 5;
+    let start = Math.max(1, props.current - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages.value, start + maxVisible - 1);
+
+    if (end - start + 1 < maxVisible) {
+        start = Math.max(1, end - maxVisible + 1);
+    }
+
+    for (let i = start; i <= end; i++) {
+        pages.push(i);
+    }
+    return pages;
+});
+
+const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages.value) {
+        emit('change', page);
+    }
+};
+
+const handlePageSizeChange = (e) => {
+    emit('page-size-change', Number(e.target.value));
+};
+</script>
+
+<style scoped>
+.base-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.page-size-selector select {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.pagination-buttons {
+    display: flex;
+    gap: 4px;
+}
+
+.page-btn {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+    background: #f5f5f5;
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-btn.active {
+    background: #1976d2;
+    color: #fff;
+    border-color: #1976d2;
 }
 </style>
 `,
@@ -725,17 +1175,31 @@ export const UI_TEXT = {
 
     api: `/**
  * ${pascalName} API 함수
+ *
+ * TODO: 실제 API 경로로 수정 필요
  */
-import { getApiUrl } from '@/api/utils/urlBuilder';
-import { setHeaders } from '@/api/utils/headers';
-import { ENV } from '@/config/env';
+
+const API_BASE_URL = '/api';
 
 /**
  * 옵션 목록 조회 (셀렉트박스용)
  */
 export const getOption = async () => {
-    // TODO: API 경로 수정 필요
-    return { result: true, data: {} };
+    // TODO: 실제 API 연동 시 주석 해제
+    // const res = await fetch(\`\${API_BASE_URL}/${camelName}/options\`);
+    // return await res.json();
+
+    // Mock 데이터
+    return {
+        result: true,
+        data: {
+            statusList: [
+                { label: '전체', value: '' },
+                { label: '활성', value: 'active' },
+                { label: '비활성', value: 'inactive' },
+            ]
+        }
+    };
 };
 
 /**
@@ -743,13 +1207,22 @@ export const getOption = async () => {
  * @param {Object} params - 검색 파라미터
  */
 export const get${pascalName}List = async (params) => {
-    const headers = await setHeaders();
-    const path = await getApiUrl('${camelName}.list');
-    const queryParams = new URLSearchParams(params).toString();
-    const url = \`\${ENV.API_BASE_URL}\${path}?\${queryParams}\`;
+    // TODO: 실제 API 연동 시 주석 해제
+    // const queryParams = new URLSearchParams(params).toString();
+    // const res = await fetch(\`\${API_BASE_URL}/${camelName}/list?\${queryParams}\`);
+    // return await res.json();
 
-    const res = await fetch(url, { headers, method: 'GET' });
-    return await res.json();
+    // Mock 데이터
+    return {
+        result: true,
+        data: {
+            list: [
+                { id: '1', name: '샘플 데이터 1', status: 'active', regDt: '2024-01-01' },
+                { id: '2', name: '샘플 데이터 2', status: 'inactive', regDt: '2024-01-02' },
+            ],
+            totalCount: 2
+        }
+    };
 };
 
 /**
@@ -757,10 +1230,7 @@ export const get${pascalName}List = async (params) => {
  * @param {string} id - 조회할 ID
  */
 export const get${pascalName} = async (id) => {
-    const headers = await setHeaders();
-    const path = await getApiUrl('${camelName}.detail');
-
-    const res = await fetch(\`\${ENV.API_BASE_URL}\${path}/\${id}\`, { headers, method: 'GET' });
+    const res = await fetch(\`\${API_BASE_URL}/${camelName}/\${id}\`);
     return await res.json();
 };
 
@@ -769,12 +1239,9 @@ export const get${pascalName} = async (id) => {
  * @param {Object} data - 등록할 데이터
  */
 export const add${pascalName} = async (data) => {
-    const headers = await setHeaders();
-    const path = await getApiUrl('${camelName}.add');
-
-    const res = await fetch(\`\${ENV.API_BASE_URL}\${path}\`, {
-        headers,
+    const res = await fetch(\`\${API_BASE_URL}/${camelName}\`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
     });
     return await res.json();
@@ -785,12 +1252,9 @@ export const add${pascalName} = async (data) => {
  * @param {Object} data - 수정할 데이터
  */
 export const update${pascalName} = async (data) => {
-    const headers = await setHeaders();
-    const path = await getApiUrl('${camelName}.update');
-
-    const res = await fetch(\`\${ENV.API_BASE_URL}\${path}\`, {
-        headers,
+    const res = await fetch(\`\${API_BASE_URL}/${camelName}\`, {
         method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
     });
     return await res.json();
@@ -801,11 +1265,7 @@ export const update${pascalName} = async (data) => {
  * @param {string} id - 삭제할 ID
  */
 export const delete${pascalName} = async (id) => {
-    const headers = await setHeaders();
-    const path = await getApiUrl('${camelName}.delete');
-
-    const res = await fetch(\`\${ENV.API_BASE_URL}\${path}/\${id}\`, {
-        headers,
+    const res = await fetch(\`\${API_BASE_URL}/${camelName}/\${id}\`, {
         method: 'DELETE',
     });
     return await res.json();
@@ -816,7 +1276,6 @@ export const delete${pascalName} = async (id) => {
  * ${pascalName} 페이지 메인 훅
  */
 import { useState, useEffect, useCallback } from 'react';
-import { useAlert } from '@ktds-ui/context';
 import { getOption, get${pascalName}List } from '../api';
 import {
     INITIAL_SEARCH_STATE,
@@ -825,8 +1284,6 @@ import {
 } from '../constants';
 
 export const use${pascalName} = () => {
-    const { alert } = useAlert();
-
     const [options, setOptions] = useState({});
     const [searchState, setSearchState] = useState(INITIAL_SEARCH_STATE);
     const [pageState, setPageState] = useState(INITIAL_PAGE_STATE);
@@ -863,15 +1320,15 @@ export const use${pascalName} = () => {
                     totalCount: res.data?.totalCount || 0,
                 }));
             } else {
-                alert({ message: ERROR_MESSAGES.FETCH_FAILED });
+                alert(ERROR_MESSAGES.FETCH_FAILED);
             }
         } catch (error) {
             console.error('Failed to fetch list:', error);
-            alert({ message: ERROR_MESSAGES.FETCH_FAILED });
+            alert(ERROR_MESSAGES.FETCH_FAILED);
         } finally {
             setIsLoading(false);
         }
-    }, [searchState, pageState.page, pageState.size, alert]);
+    }, [searchState, pageState.page, pageState.size]);
 
     const onSearch = useCallback(() => {
         setPageState(prev => ({ ...prev, page: 1 }));
@@ -915,15 +1372,15 @@ export const use${pascalName} = () => {
 };
 `,
 
-    page: `'use client'
+    page: `'use client';
 
 /**
  * ${pascalName} 페이지
  */
-import { ContentTitle } from '@ktds-ui/layout';
 import { use${pascalName} } from './components/hooks/use${pascalName}';
 import ${pascalName}Search from './components/ui/${pascalName}Search';
 import ${pascalName}List from './components/ui/${pascalName}List';
+import styles from './${pascalName}Page.module.css';
 
 export const ${pascalName}Page = () => {
     const {
@@ -940,11 +1397,17 @@ export const ${pascalName}Page = () => {
     } = use${pascalName}();
 
     return (
-        <>
-            <ContentTitle
-                title="${pascalName} 관리"
-                breadcrumb={['업무지원', '시스템 관리', '${pascalName} 관리']}
-            />
+        <div className={styles.page}>
+            <div className={styles.pageHeader}>
+                <h1 className={styles.pageTitle}>${pascalName} 관리</h1>
+                <div className={styles.breadcrumb}>
+                    <span>업무지원</span>
+                    <span className={styles.separator}>/</span>
+                    <span>시스템 관리</span>
+                    <span className={styles.separator}>/</span>
+                    <span className={styles.current}>${pascalName} 관리</span>
+                </div>
+            </div>
 
             <${pascalName}Search
                 options={options}
@@ -961,18 +1424,20 @@ export const ${pascalName}Page = () => {
                 onChangePage={onChangePage}
                 onChangePageSize={onChangePageSize}
             />
-        </>
+        </div>
     );
 };
+
+export default ${pascalName}Page;
 `,
 
-    search: `'use client'
+    search: `'use client';
 
 /**
  * ${pascalName} 검색 컴포넌트
  */
-import { Stack, Button, Input } from '@ktds-ui/components';
 import { UI_TEXT } from '../constants';
+import styles from './${pascalName}Search.module.css';
 
 const ${pascalName}Search = ({
     options,
@@ -993,37 +1458,60 @@ const ${pascalName}Search = ({
     };
 
     return (
-        <Stack direction="column" gap={16} style={{ marginBottom: '20px' }}>
-            <Stack direction="row" gap={12} align="center">
-                <Input
-                    label="검색어"
-                    value={searchState.keyword}
-                    onChange={handleChange('keyword')}
-                    onKeyDown={handleKeyDown}
-                    placeholder="검색어를 입력하세요"
-                />
+        <div className={styles.search}>
+            <div className={styles.searchRow}>
+                <div className={styles.searchField}>
+                    <label className={styles.fieldLabel}>검색어</label>
+                    <input
+                        type="text"
+                        className={styles.fieldInput}
+                        value={searchState.keyword}
+                        onChange={handleChange('keyword')}
+                        onKeyDown={handleKeyDown}
+                        placeholder="검색어를 입력하세요"
+                    />
+                </div>
 
-                <Button variant="primary" onClick={onSearch}>
-                    {UI_TEXT.SEARCH}
-                </Button>
-                <Button variant="secondary" onClick={onReset}>
-                    {UI_TEXT.RESET}
-                </Button>
-            </Stack>
-        </Stack>
+                <div className={styles.searchField}>
+                    <label className={styles.fieldLabel}>상태</label>
+                    <select
+                        className={styles.fieldSelect}
+                        value={searchState.status}
+                        onChange={handleChange('status')}
+                    >
+                        {(options.statusList || []).map(opt => (
+                            <option key={opt.value} value={opt.value}>
+                                {opt.label}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className={styles.searchButtons}>
+                    <button type="button" className={styles.btnPrimary} onClick={onSearch}>
+                        {UI_TEXT.SEARCH}
+                    </button>
+                    <button type="button" className={styles.btnSecondary} onClick={onReset}>
+                        {UI_TEXT.RESET}
+                    </button>
+                </div>
+            </div>
+        </div>
     );
 };
 
 export default ${pascalName}Search;
 `,
 
-    list: `'use client'
+    list: `'use client';
 
 /**
  * ${pascalName} 목록 컴포넌트
  */
-import { Stack, Button, Table, Pagination } from '@ktds-ui/components';
+import BaseTable from './BaseTable';
+import BasePagination from './BasePagination';
 import { TABLE_HEADERS, UI_TEXT } from '../constants';
+import styles from './${pascalName}List.module.css';
 
 const ${pascalName}List = ({
     data,
@@ -1037,34 +1525,244 @@ const ${pascalName}List = ({
     const { list = [], totalCount = 0 } = data;
 
     return (
-        <Stack direction="column" gap={16}>
-            <Stack direction="row" justify="space-between" align="center">
-                <span>총 {totalCount}건</span>
-                <Button variant="primary" onClick={onOpenRegist}>
+        <div className={styles.list}>
+            <div className={styles.listHeader}>
+                <span className={styles.totalCount}>총 {totalCount}건</span>
+                <button type="button" className={styles.btnPrimary} onClick={onOpenRegist}>
                     {UI_TEXT.REGISTER}
-                </Button>
-            </Stack>
+                </button>
+            </div>
 
-            <Table
+            <BaseTable
                 headers={TABLE_HEADERS}
                 data={list}
                 loading={isLoading}
                 onRowClick={onRowClick}
-                emptyMessage="데이터가 없습니다."
             />
 
-            <Pagination
+            <BasePagination
                 current={pageState.page}
                 total={totalCount}
                 pageSize={pageState.size}
                 onChange={onChangePage}
                 onPageSizeChange={onChangePageSize}
             />
-        </Stack>
+        </div>
     );
 };
 
 export default ${pascalName}List;
+`,
+
+    baseTable: `'use client';
+
+/**
+ * 기본 테이블 컴포넌트
+ */
+import styles from './BaseTable.module.css';
+
+const BaseTable = ({ headers, data = [], loading = false, onRowClick }) => {
+    return (
+        <div className={styles.tableWrapper}>
+            {loading && (
+                <div className={styles.loadingOverlay}>
+                    <span>로딩 중...</span>
+                </div>
+            )}
+
+            <table className={styles.table}>
+                <thead>
+                    <tr>
+                        {headers.map(header => (
+                            <th
+                                key={header.name}
+                                style={{ width: header.width, textAlign: header.align }}
+                            >
+                                {header.header}
+                            </th>
+                        ))}
+                    </tr>
+                </thead>
+                <tbody>
+                    {data.length === 0 ? (
+                        <tr>
+                            <td colSpan={headers.length} className={styles.emptyMessage}>
+                                데이터가 없습니다.
+                            </td>
+                        </tr>
+                    ) : (
+                        data.map((row, index) => (
+                            <tr
+                                key={index}
+                                className={styles.tableRow}
+                                onClick={() => onRowClick?.(row)}
+                            >
+                                {headers.map(header => (
+                                    <td key={header.name} style={{ textAlign: header.align }}>
+                                        {row[header.name]}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))
+                    )}
+                </tbody>
+            </table>
+        </div>
+    );
+};
+
+export default BaseTable;
+`,
+
+    basePagination: `'use client';
+
+/**
+ * 기본 페이지네이션 컴포넌트
+ */
+import { useMemo } from 'react';
+import styles from './BasePagination.module.css';
+
+const BasePagination = ({ current = 1, total = 0, pageSize = 10, onChange, onPageSizeChange }) => {
+    const pageSizes = [10, 20, 50, 100];
+
+    const totalPages = useMemo(() => Math.ceil(total / pageSize) || 1, [total, pageSize]);
+
+    const visiblePages = useMemo(() => {
+        const pages = [];
+        const maxVisible = 5;
+        let start = Math.max(1, current - Math.floor(maxVisible / 2));
+        let end = Math.min(totalPages, start + maxVisible - 1);
+
+        if (end - start + 1 < maxVisible) {
+            start = Math.max(1, end - maxVisible + 1);
+        }
+
+        for (let i = start; i <= end; i++) {
+            pages.push(i);
+        }
+        return pages;
+    }, [current, totalPages]);
+
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            onChange?.(page);
+        }
+    };
+
+    const handlePageSizeChange = (e) => {
+        onPageSizeChange?.(Number(e.target.value));
+    };
+
+    return (
+        <div className={styles.pagination}>
+            <div className={styles.pageSizeSelector}>
+                <select value={pageSize} onChange={handlePageSizeChange}>
+                    {pageSizes.map(size => (
+                        <option key={size} value={size}>
+                            {size}개씩 보기
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            <div className={styles.paginationButtons}>
+                <button
+                    type="button"
+                    className={styles.pageBtn}
+                    disabled={current === 1}
+                    onClick={() => handlePageChange(current - 1)}
+                >
+                    이전
+                </button>
+
+                {visiblePages.map(page => (
+                    <button
+                        key={page}
+                        type="button"
+                        className={\`\${styles.pageBtn} \${page === current ? styles.active : ''}\`}
+                        onClick={() => handlePageChange(page)}
+                    >
+                        {page}
+                    </button>
+                ))}
+
+                <button
+                    type="button"
+                    className={styles.pageBtn}
+                    disabled={current === totalPages}
+                    onClick={() => handlePageChange(current + 1)}
+                >
+                    다음
+                </button>
+            </div>
+        </div>
+    );
+};
+
+export default BasePagination;
+`,
+
+    // CSS Module 스타일
+    pageStyles: `.page {
+    padding: 20px;
+}
+.pageHeader { margin-bottom: 24px; }
+.pageTitle { font-size: 24px; font-weight: 600; margin: 0 0 8px 0; }
+.breadcrumb { font-size: 14px; color: #666; }
+.separator { margin: 0 8px; }
+.current { color: #333; font-weight: 500; }
+`,
+
+    searchStyles: `.search {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.searchRow { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
+.searchField { display: flex; flex-direction: column; gap: 6px; }
+.fieldLabel { font-size: 14px; font-weight: 500; color: #333; }
+.fieldInput, .fieldSelect { padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; min-width: 200px; }
+.fieldInput:focus, .fieldSelect:focus { outline: none; border-color: #1976d2; }
+.searchButtons { display: flex; gap: 8px; }
+.btnPrimary, .btnSecondary { padding: 8px 16px; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; }
+.btnPrimary { background: #1976d2; color: #fff; }
+.btnPrimary:hover { background: #1565c0; }
+.btnSecondary { background: #e0e0e0; color: #333; }
+.btnSecondary:hover { background: #d0d0d0; }
+`,
+
+    listStyles: `.list {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+}
+.listHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.totalCount { font-size: 14px; color: #666; }
+.btnPrimary { padding: 8px 16px; border: none; border-radius: 4px; font-size: 14px; cursor: pointer; background: #1976d2; color: #fff; }
+.btnPrimary:hover { background: #1565c0; }
+`,
+
+    baseTableStyles: `.tableWrapper { position: relative; overflow-x: auto; }
+.loadingOverlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.8); display: flex; align-items: center; justify-content: center; z-index: 10; }
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { padding: 12px; border-bottom: 1px solid #e0e0e0; }
+.table th { background: #f5f5f5; font-weight: 600; font-size: 14px; }
+.table td { font-size: 14px; }
+.tableRow { cursor: pointer; transition: background-color 0.2s; }
+.tableRow:hover { background: #f9f9f9; }
+.emptyMessage { text-align: center; color: #999; padding: 40px !important; }
+`,
+
+    basePaginationStyles: `.pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 16px; border-top: 1px solid #e0e0e0; }
+.pageSizeSelector select { padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+.paginationButtons { display: flex; gap: 4px; }
+.pageBtn { padding: 6px 12px; border: 1px solid #ddd; background: #fff; border-radius: 4px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+.pageBtn:hover:not(:disabled) { background: #f5f5f5; }
+.pageBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+.active { background: #1976d2; color: #fff; border-color: #1976d2; }
 `,
 });
 
