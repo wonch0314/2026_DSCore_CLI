@@ -82,36 +82,46 @@ defineExpose({
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-textarea {
     width: 100%;
+    min-width: 0;
+    min-height: 4rem;
     resize: none;
     display: block;
-    padding: var(--ds-spacing-2, 0.5rem) 0;
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid var(--ds-outline, #8a979d);
-    border-radius: 0;
+    border-radius: var(--ds-radius-md, 0.375rem);
+    border: 1px solid var(--ds-border, rgba(0, 0, 0, 0.1));
+    background: var(--ds-input-background, #f3f3f5);
+    padding: 0.5rem 0.75rem;
+    font-size: var(--ds-font-size-sm, 0.875rem);
+    font-family: var(--ds-font-family, inherit);
+    color: var(--ds-foreground, #1a1a1a);
+    line-height: 1.5;
     outline: none;
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
-    font-size: var(--ds-font-size-md, 0.9375rem);
-    color: var(--ds-on-surface, #2a3439);
-    line-height: var(--ds-line-height-normal, 1.5);
-    transition: border-bottom-color 0.15s;
+    box-sizing: border-box;
+    transition:
+      color var(--ds-transition-fast, 150ms cubic-bezier(0.4, 0, 0.2, 1)),
+      box-shadow var(--ds-transition-fast, 150ms cubic-bezier(0.4, 0, 0.2, 1));
   }
 
   .ds-textarea::placeholder {
-    color: var(--ds-on-surface-variant, #6b7b82);
-    opacity: 0.6;
+    color: var(--ds-muted-foreground, #717182);
   }
 
-  .ds-textarea:focus {
-    border-bottom: 2px solid var(--ds-primary, #5f5e5e);
+  .ds-textarea:focus-visible {
+    border-color: var(--ds-ring, #a8a8a8);
+    box-shadow: 0 0 0 3px var(--ds-ring-color, rgba(168, 168, 168, 0.5));
   }
 
   .ds-textarea:disabled {
-    opacity: 0.5;
+    pointer-events: none;
     cursor: not-allowed;
+    opacity: 0.5;
   }
-}
+
+  .ds-textarea--error,
+  .ds-textarea[aria-invalid="true"] {
+    border-color: var(--ds-destructive, #d4183d);
+    box-shadow: 0 0 0 3px var(--ds-ring-destructive, rgba(212, 24, 61, 0.2));
+  }
 </style>

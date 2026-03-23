@@ -46,29 +46,29 @@ const getStyle = () => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-skeleton {
     display: block;
-    background: var(--ds-surface-container, #e8eff3);
-    border-radius: 0px;
+    background: var(--ds-accent, #e9ebef);
+    border-radius: 0.375rem;
   }
 
   .ds-skeleton--text {
-    height: 1em;
-    border-radius: 0px;
+    height: 0.85em;
+    border-radius: 0.375rem;
     width: 100%;
   }
 
   .ds-skeleton--circular {
-    border-radius: 50%;
+    border-radius: 9999px;
   }
 
   .ds-skeleton--rectangular {
-    border-radius: 0px;
+    border-radius: 0.375rem;
   }
 
   .ds-skeleton--pulse {
-    animation: ds-skeleton-pulse 1.5s ease-in-out infinite;
+    animation: ds-skeleton-pulse 2s ease-in-out infinite;
   }
 
   .ds-skeleton--wave {
@@ -83,20 +83,21 @@ const getStyle = () => {
     transform: translateX(-100%);
     background: linear-gradient(
       90deg,
-      transparent,
-      rgba(255, 255, 255, 0.4),
-      transparent
+      transparent 0%,
+      rgba(255, 255, 255, 0.55) 50%,
+      transparent 100%
     );
-    animation: ds-skeleton-wave 1.5s linear infinite;
+    animation: ds-skeleton-wave 1.6s ease-in-out infinite;
   }
 
   @keyframes ds-skeleton-pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+    0%   { opacity: 1; }
+    50%  { opacity: 0.38; }
+    100% { opacity: 1; }
   }
 
   @keyframes ds-skeleton-wave {
+    0%   { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
   }
-}
 </style>

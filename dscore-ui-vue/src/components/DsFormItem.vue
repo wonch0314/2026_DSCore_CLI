@@ -65,26 +65,24 @@ defineExpose({ setError, clearError, hasError })
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-form-item {
-    display: flex;
-    flex-direction: column;
-    gap: var(--ds-spacing-1, 0.25rem);
-    margin-bottom: var(--ds-spacing-4, 1rem);
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
+    display: grid;
+    gap: 0.5rem;
+    font-family: var(--ds-font-family, inherit);
   }
 
   .ds-form-item-label {
-    font-size: var(--ds-font-size-xs, 0.75rem);
+    display: block;
+    font-size: 0.875rem;
     font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: var(--ds-letter-spacing-wide, 0.05em);
-    color: var(--ds-on-surface-variant, #6b7b82);
+    line-height: 1;
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-form-item-required {
-    color: var(--ds-error, #9f403d);
-    margin-left: 0.25rem;
+    color: var(--ds-destructive, #d4183d);
+    margin-left: 0.2em;
   }
 
   .ds-form-item-content {
@@ -93,13 +91,17 @@ defineExpose({ setError, clearError, hasError })
   }
 
   .ds-form-item-error {
-    font-size: var(--ds-font-size-sm, 0.875rem);
-    color: var(--ds-error, #9f403d);
-    margin-top: var(--ds-spacing-1, 0.25rem);
+    font-size: 0.875rem;
+    color: var(--ds-destructive, #d4183d);
+    animation: ds-form-error-in 200ms ease both;
+  }
+
+  @keyframes ds-form-error-in {
+    from { opacity: 0; transform: translateY(-3px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   .ds-form-item--error .ds-form-item-label {
-    color: var(--ds-error, #9f403d);
+    color: var(--ds-destructive, #d4183d);
   }
-}
 </style>

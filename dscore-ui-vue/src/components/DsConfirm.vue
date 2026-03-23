@@ -121,16 +121,15 @@ defineExpose({ open, confirm, cancel })
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-confirm .ds-modal {
-    max-width: 400px;
-    border-radius: 0px;
+    max-width: 32rem;
   }
 
   .ds-confirm-header {
     display: flex;
     align-items: center;
-    gap: var(--ds-spacing-3, 0.75rem);
+    gap: 0.75rem;
   }
 
   .ds-confirm-icon {
@@ -146,46 +145,60 @@ defineExpose({ open, confirm, cancel })
 
   .ds-confirm-title {
     font-weight: 600;
-    font-size: var(--ds-font-size-lg, 1.125rem);
-    color: var(--ds-on-surface, #2a3439);
+    font-size: 1.125rem;
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-confirm-message {
-    color: var(--ds-on-surface-variant, #5a6970);
+    color: var(--ds-muted-foreground, #717182);
     line-height: 1.5;
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    font-size: 0.875rem;
   }
 
   .ds-confirm-footer {
     display: flex;
     justify-content: flex-end;
-    gap: var(--ds-spacing-3, 0.75rem);
+    gap: 0.5rem;
   }
 
   .ds-confirm-cancel {
-    background: var(--ds-surface-container-low, #f0f4f7);
-    color: var(--ds-on-surface, #2a3439);
-    padding: var(--ds-spacing-2, 0.5rem) var(--ds-spacing-4, 1rem);
-    border-radius: 0px;
-    border: 1px solid rgba(169, 180, 185, 0.2);
+    background: transparent;
+    color: var(--ds-foreground, #1a1a1a);
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background 150ms cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .ds-confirm-cancel:hover {
+    background: var(--ds-accent, #e9ebef);
   }
 
   .ds-confirm-ok {
-    padding: var(--ds-spacing-2, 0.5rem) var(--ds-spacing-4, 1rem);
-    border-radius: 0px;
-    color: var(--ds-on-primary, #fff);
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    border: none;
+    color: #fff;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: opacity 150ms cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .ds-confirm-ok:hover {
+    opacity: 0.9;
   }
 
   .ds-confirm-ok--info {
-    background: var(--ds-info, #3d6b8a);
+    background: var(--ds-primary, #030213);
   }
 
   .ds-confirm-ok--warning {
-    background: var(--ds-warning, #8a6d2b);
+    background: #8a6d2b;
   }
 
   .ds-confirm-ok--danger {
-    background: var(--ds-error, #9f403d);
+    background: var(--ds-destructive, #d4183d);
   }
-}
 </style>

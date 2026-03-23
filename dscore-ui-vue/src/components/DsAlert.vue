@@ -76,36 +76,47 @@ const getDefaultIcon = (type: string) => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-alert {
     display: flex;
     align-items: flex-start;
-    gap: var(--ds-spacing-3, 0.75rem);
-    padding: var(--ds-spacing-4, 1rem);
-    border-radius: 0px;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    position: relative;
+    font-size: 0.875rem;
+    background: var(--ds-card, #fff);
+    color: var(--ds-card-foreground, #1a1a1a);
   }
 
   .ds-alert--info {
     background: var(--ds-info-container, #f0f6fa);
     color: var(--ds-info, #3d6b8a);
+    border-color: rgba(61, 107, 138, 0.2);
   }
   .ds-alert--success {
-    background: var(--ds-success-container, #edf6f0);
+    background: var(--ds-success-container, #f0f7f2);
     color: var(--ds-success, #3d7a4a);
+    border-color: rgba(61, 122, 74, 0.2);
   }
   .ds-alert--warning {
-    background: var(--ds-warning-container, #f9f3e6);
+    background: var(--ds-warning-container, #fdf8ef);
     color: var(--ds-warning, #8a6d2b);
+    border-color: rgba(138, 109, 43, 0.2);
   }
   .ds-alert--error {
-    background: var(--ds-error-container, #faf0f0);
-    color: var(--ds-error, #9f403d);
+    background: var(--ds-error-container, #fdf2f2);
+    color: var(--ds-destructive, #d4183d);
+    border-color: rgba(212, 24, 61, 0.2);
   }
 
   .ds-alert-icon {
     flex-shrink: 0;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    opacity: 0.9;
   }
 
   .ds-alert-icon svg {
@@ -115,36 +126,45 @@ const getDefaultIcon = (type: string) => {
 
   .ds-alert-content {
     flex: 1;
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    font-size: 0.875rem;
+    line-height: 1.5;
   }
 
   .ds-alert-close {
     flex-shrink: 0;
     background: none;
     border: none;
-    padding: 0;
+    padding: 0.25rem;
     cursor: pointer;
-    opacity: 0.5;
+    opacity: 0.45;
+    color: currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: -2px;
+    transition: opacity 150ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-alert-close:hover {
-    opacity: 1;
+    opacity: 0.85;
   }
 
   .ds-alert-close svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
   }
 
   .ds-alert-enter-active,
   .ds-alert-leave-active {
-    transition: all 0.2s ease;
+    transition: opacity 250ms cubic-bezier(0.4,0,0.2,1),
+                transform 250ms cubic-bezier(0.4,0,0.2,1),
+                max-height 250ms cubic-bezier(0.4,0,0.2,1);
+    overflow: hidden;
   }
 
   .ds-alert-enter-from,
   .ds-alert-leave-to {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-6px);
   }
-}
 </style>

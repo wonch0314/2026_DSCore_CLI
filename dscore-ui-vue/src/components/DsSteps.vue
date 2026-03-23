@@ -88,10 +88,9 @@ const stepStatuses = computed(() =>
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-steps {
     display: flex;
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
   }
 
   .ds-steps--horizontal {
@@ -119,7 +118,6 @@ const stepStatuses = computed(() =>
     flex: none;
   }
 
-  /* Icon wrapper handles icon + connector alignment */
   .ds-steps__icon-wrapper {
     display: flex;
     align-items: center;
@@ -129,70 +127,70 @@ const stepStatuses = computed(() =>
   .ds-steps--horizontal .ds-steps__icon-wrapper {
     flex-direction: row;
     width: 100%;
-    margin-bottom: var(--ds-spacing-2, 0.5rem);
+    margin-bottom: 0.5rem;
   }
 
   .ds-steps--vertical .ds-steps__icon-wrapper {
     flex-direction: column;
     align-items: center;
-    margin-right: var(--ds-spacing-3, 0.75rem);
+    margin-right: 0.75rem;
   }
 
   .ds-steps__icon {
-    width: 28px;
-    height: 28px;
+    width: 2rem;
+    height: 2rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0px;
+    border-radius: 9999px;
     flex-shrink: 0;
   }
 
   .ds-steps__item--completed .ds-steps__icon {
-    background: var(--ds-primary, #5f5e5e);
-    color: var(--ds-on-primary, #faf7f6);
+    background: var(--ds-primary, #030213);
+    color: var(--ds-primary-foreground, #fff);
   }
 
   .ds-steps__item--active .ds-steps__icon {
-    background: var(--ds-primary, #5f5e5e);
-    color: var(--ds-on-primary, #faf7f6);
+    background: var(--ds-primary, #030213);
+    color: var(--ds-primary-foreground, #fff);
   }
 
   .ds-steps__item--pending .ds-steps__icon {
     background: transparent;
-    border: var(--ds-ghost-border-strong, 1.5px solid rgba(169, 180, 185, 0.5));
-    color: var(--ds-on-surface-variant, #8c9ea5);
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    color: var(--ds-muted-foreground, #717182);
   }
 
   .ds-steps__number {
-    font-size: var(--ds-font-size-xs, 0.75rem);
+    font-size: 0.75rem;
     font-weight: 500;
     line-height: 1;
   }
 
   .ds-steps__connector {
     flex: 1;
-    background: var(--ds-outline-variant, #a9b4b9);
+    background: var(--ds-border, rgba(0,0,0,0.1));
   }
 
   .ds-steps--horizontal .ds-steps__connector {
     height: 1px;
-    margin: 0 var(--ds-spacing-2, 0.5rem);
+    margin: 0 0.5rem;
     align-self: center;
   }
 
   .ds-steps--vertical .ds-steps__connector {
     width: 1px;
     flex: none;
-    height: var(--ds-spacing-6, 1.5rem);
+    height: 1.5rem;
   }
 
   .ds-steps__connector--completed {
-    background: var(--ds-primary, #5f5e5e);
+    background: var(--ds-primary, #030213);
   }
 
   .ds-steps__content {
-    padding-bottom: var(--ds-spacing-4, 1rem);
+    padding-bottom: 1rem;
   }
 
   .ds-steps--horizontal .ds-steps__content {
@@ -200,21 +198,20 @@ const stepStatuses = computed(() =>
   }
 
   .ds-steps__title {
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    font-size: 0.875rem;
     font-weight: 500;
-    color: var(--ds-on-surface, #1a1a1a);
+    color: var(--ds-foreground, #1a1a1a);
     line-height: 1.4;
   }
 
   .ds-steps__item--pending .ds-steps__title {
-    color: var(--ds-on-surface-variant, #8c9ea5);
+    color: var(--ds-muted-foreground, #717182);
   }
 
   .ds-steps__description {
-    font-size: var(--ds-font-size-xs, 0.75rem);
-    color: var(--ds-on-surface-variant, #8c9ea5);
-    margin-top: var(--ds-spacing-1, 0.25rem);
+    font-size: 0.75rem;
+    color: var(--ds-muted-foreground, #717182);
+    margin-top: 0.25rem;
     line-height: 1.4;
   }
-}
 </style>

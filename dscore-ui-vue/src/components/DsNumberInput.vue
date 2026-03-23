@@ -143,67 +143,94 @@ defineExpose({
 </template>
 
 <style>
-@layer ds-base {
+
+  /* Container — matches DsInput shape */
   .ds-number-input {
     display: inline-flex;
     align-items: stretch;
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
-    color: var(--ds-on-surface, #2a3439);
-    border-bottom: 1px solid var(--ds-outline, #8a979d);
-    transition: border-bottom-color 0.15s;
+    height: 2.25rem;
+    border-radius: var(--ds-radius-md, 0.375rem);
+    border: 1px solid var(--ds-border, rgba(0, 0, 0, 0.1));
+    background: var(--ds-input-background, #f3f3f5);
+    font-family: var(--ds-font-family, inherit);
+    color: var(--ds-foreground, #1a1a1a);
+    overflow: hidden;
+    transition: box-shadow var(--ds-transition-fast, 150ms cubic-bezier(0.4, 0, 0.2, 1));
+    box-sizing: border-box;
   }
 
   .ds-number-input:focus-within {
-    border-bottom: 2px solid var(--ds-primary, #5f5e5e);
+    border-color: var(--ds-ring, #a8a8a8);
+    box-shadow: 0 0 0 3px var(--ds-ring-color, rgba(168, 168, 168, 0.5));
   }
 
   .ds-number-input--disabled {
-    opacity: 0.6;
+    opacity: 0.5;
+    pointer-events: none;
   }
 
+  /* +/− buttons — minimal, borderless */
   .ds-number-input-btn {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
     background: none;
     border: none;
-    border-left: 1px solid rgba(169, 180, 185, 0.2);
-    padding: var(--ds-spacing-1, 0.25rem) var(--ds-spacing-2, 0.5rem);
+    border-left: 1px solid var(--ds-border, rgba(0, 0, 0, 0.1));
+    width: 2rem;
+    padding: 0;
     cursor: pointer;
-    color: var(--ds-on-surface-variant, #6b7b82);
-    transition: background 0.1s;
+    color: var(--ds-muted-foreground, #717182);
+    transition:
+      background var(--ds-transition-fast, 150ms cubic-bezier(0.4, 0, 0.2, 1)),
+      color var(--ds-transition-fast, 150ms cubic-bezier(0.4, 0, 0.2, 1));
   }
 
   .ds-number-input-btn--decrement {
     border-left: none;
-    border-right: 1px solid rgba(169, 180, 185, 0.2);
+    border-right: 1px solid var(--ds-border, rgba(0, 0, 0, 0.1));
     order: -1;
   }
 
   .ds-number-input-btn:hover:not(:disabled) {
-    background: var(--ds-surface-container-low, #f0f4f7);
+    background: var(--ds-accent, #e9ebef);
+    color: var(--ds-foreground, #1a1a1a);
+  }
+
+  .ds-number-input-btn:active:not(:disabled) {
+    background: rgba(0, 0, 0, 0.08);
   }
 
   .ds-number-input-btn:disabled {
-    opacity: 0.4;
+    opacity: 0.5;
     cursor: not-allowed;
   }
 
   .ds-number-input-btn svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
+    stroke-width: 2;
   }
 
+  /* Number field */
   .ds-number-input-field {
     text-align: center;
+    min-width: 60px;
     width: 100%;
     border: none;
     outline: none;
     background: transparent;
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
-    font-size: var(--ds-font-size-md, 0.9375rem);
-    color: var(--ds-on-surface, #2a3439);
-    padding: var(--ds-spacing-2, 0.5rem) 0;
+    font-family: var(--ds-font-family, inherit);
+    font-size: var(--ds-font-size-sm, 0.875rem);
+    font-weight: 500;
+    color: var(--ds-foreground, #1a1a1a);
+    padding: 0 0.5rem;
+  }
+
+  .ds-number-input-field::placeholder {
+    color: var(--ds-muted-foreground, #717182);
+    font-weight: 400;
   }
 
   .ds-number-input-field::-webkit-outer-spin-button,
@@ -211,5 +238,8 @@ defineExpose({
     -webkit-appearance: none;
     margin: 0;
   }
-}
+
+  .ds-number-input-field[type=number] {
+    -moz-appearance: textfield;
+  }
 </style>

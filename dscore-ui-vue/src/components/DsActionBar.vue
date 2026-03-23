@@ -36,30 +36,29 @@ const hasSelection = computed(() => props.selectedCount > 0)
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-action-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--ds-spacing-3) 0;
+    padding: 0.75rem 0;
   }
 
   .ds-action-bar__left {
     display: flex;
     align-items: center;
-    gap: var(--ds-spacing-3);
+    gap: 0.75rem;
   }
 
   .ds-action-bar__right {
     display: flex;
     align-items: center;
-    gap: var(--ds-spacing-2);
+    gap: 0.5rem;
   }
 
   .ds-action-bar__selected-info {
-    font-size: var(--ds-font-size-sm);
-    color: var(--ds-primary);
+    font-size: 0.875rem;
+    color: var(--ds-foreground, #1a1a1a);
     font-weight: 500;
   }
-}
 </style>

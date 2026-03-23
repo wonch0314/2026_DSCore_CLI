@@ -365,13 +365,13 @@ export const DsTreeNodeList = defineComponent({
 </script>
 
 <style>
-@layer ds-base {
+
   .ds-tree-select {
     position: relative;
     display: inline-block;
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
-    font-size: var(--ds-font-size-sm, 0.875rem);
-    color: var(--ds-on-surface, #2a3439);
+    font-family: var(--ds-font-family, inherit);
+    font-size: 0.875rem;
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-tree-select--navigate {
@@ -383,38 +383,46 @@ export const DsTreeNodeList = defineComponent({
     pointer-events: none;
   }
 
-  /* Trigger */
   .ds-tree-select-trigger {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     cursor: pointer;
-    padding: var(--ds-spacing-2, 0.5rem) 0;
-    border-bottom: 1px solid var(--ds-outline, #8a979d);
-    transition: border-bottom-color 0.15s;
+    padding: 0.5rem;
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    border-radius: 0.375rem;
+    background: var(--ds-background, #fff);
+    transition: border-color 150ms cubic-bezier(0.4,0,0.2,1),
+                box-shadow 150ms cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .ds-tree-select-trigger:focus {
+    outline: none;
+    border-color: #a8a8a8;
+    box-shadow: 0 0 0 3px rgba(168,168,168,0.5);
   }
 
   .ds-tree-select--open .ds-tree-select-trigger {
-    border-bottom: 2px solid var(--ds-primary, #5f5e5e);
+    border-color: #a8a8a8;
+    box-shadow: 0 0 0 3px rgba(168,168,168,0.5);
   }
 
   .ds-tree-select-value {
     flex: 1;
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    font-size: 0.875rem;
   }
 
   .ds-tree-select-placeholder {
     flex: 1;
-    color: var(--ds-on-surface-variant, #6b7b82);
-    opacity: 0.6;
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    color: var(--ds-muted-foreground, #717182);
+    font-size: 0.875rem;
   }
 
   .ds-tree-select-arrow {
     display: flex;
     align-items: center;
-    color: var(--ds-on-surface-variant, #6b7b82);
-    transition: transform 0.2s;
+    color: var(--ds-muted-foreground, #717182);
+    transition: transform 150ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-tree-select-arrow svg {
@@ -426,57 +434,54 @@ export const DsTreeNodeList = defineComponent({
     transform: rotate(180deg);
   }
 
-  /* Dropdown */
   .ds-tree-select-dropdown {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
-    z-index: 100;
-    background: var(--ds-surface-container-lowest, #fff);
-    border: var(--ds-ghost-border, 1px solid rgba(169, 180, 185, 0.2));
-    border-radius: 0px;
+    z-index: 50;
+    background: var(--ds-popover, #fff);
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    border-radius: 0.375rem;
     margin-top: 4px;
-    box-shadow: var(--ds-shadow-ambient, 0 2px 8px rgba(42, 52, 57, 0.08));
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
     min-width: 200px;
   }
 
-  /* Inline navigate */
   .ds-tree-select-inline {
-    background: var(--ds-surface-container-lowest, #fff);
-    border: var(--ds-ghost-border, 1px solid rgba(169, 180, 185, 0.2));
-    box-shadow: var(--ds-shadow-ambient, 0 2px 8px rgba(42, 52, 57, 0.08));
+    background: var(--ds-background, #fff);
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    border-radius: 0.375rem;
   }
 
-  /* Search */
   .ds-tree-select-search {
     width: 100%;
     box-sizing: border-box;
-    padding: var(--ds-spacing-2, 0.5rem);
+    padding: 0.5rem;
     border: none;
-    border-bottom: 1px solid var(--ds-outline, rgba(169, 180, 185, 0.4));
+    border-bottom: 1px solid var(--ds-border, rgba(0,0,0,0.1));
     outline: none;
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
-    font-size: var(--ds-font-size-sm, 0.875rem);
-    color: var(--ds-on-surface, #2a3439);
+    font-family: var(--ds-font-family, inherit);
+    font-size: 0.875rem;
+    color: var(--ds-foreground, #1a1a1a);
     background: transparent;
+    border-radius: 0.375rem 0.375rem 0 0;
   }
 
   .ds-tree-select-search:focus {
-    border-bottom: 2px solid var(--ds-primary, #5f5e5e);
+    border-bottom-color: #a8a8a8;
+    box-shadow: none;
   }
 
   .ds-tree-select-search--inline {
-    padding: var(--ds-spacing-2, 0.5rem) var(--ds-spacing-3, 0.75rem);
+    padding: 0.5rem 0.75rem;
   }
 
-  /* Tree container */
   .ds-tree-select-tree {
     max-height: 280px;
     overflow-y: auto;
   }
 
-  /* Node */
   .ds-tree-node-list {
     display: flex;
     flex-direction: column;
@@ -490,24 +495,24 @@ export const DsTreeNodeList = defineComponent({
   .ds-tree-node {
     display: flex;
     align-items: center;
-    gap: var(--ds-spacing-2, 0.5rem);
-    padding: var(--ds-spacing-2, 0.5rem) var(--ds-spacing-3, 0.75rem);
-    padding-right: var(--ds-spacing-3, 0.75rem);
+    gap: 0.5rem;
+    padding: 0.375rem 0.5rem;
     cursor: pointer;
-    transition: background 0.1s;
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    transition: background 150ms cubic-bezier(0.4,0,0.2,1);
+    font-size: 0.875rem;
+    border-radius: 0.125rem;
   }
 
   .ds-tree-node:hover:not(.ds-tree-node--disabled) {
-    background: var(--ds-surface-container-low, #f0f4f7);
+    background: var(--ds-accent, #e9ebef);
   }
 
   .ds-tree-node--selected {
-    background: var(--ds-surface-container-highest, #d9e4ea);
+    background: var(--ds-accent, #e9ebef);
   }
 
   .ds-tree-node--selected .ds-tree-node-label {
-    color: var(--ds-primary, #5f5e5e);
+    color: var(--ds-foreground, #1a1a1a);
     font-weight: 500;
   }
 
@@ -516,7 +521,6 @@ export const DsTreeNodeList = defineComponent({
     cursor: not-allowed;
   }
 
-  /* Arrow */
   .ds-tree-node-arrow {
     display: flex;
     align-items: center;
@@ -524,8 +528,8 @@ export const DsTreeNodeList = defineComponent({
     flex-shrink: 0;
     width: 16px;
     height: 16px;
-    color: var(--ds-on-surface-variant, #6b7b82);
-    transition: transform 0.2s;
+    color: var(--ds-muted-foreground, #717182);
+    transition: transform 150ms cubic-bezier(0.4,0,0.2,1);
     cursor: pointer;
   }
 
@@ -538,16 +542,14 @@ export const DsTreeNodeList = defineComponent({
     transform: rotate(90deg);
   }
 
-  /* Checkbox */
   .ds-tree-node-checkbox {
     flex-shrink: 0;
     cursor: pointer;
-    accent-color: var(--ds-primary, #5f5e5e);
+    accent-color: var(--ds-primary, #030213);
     width: 14px;
     height: 14px;
   }
 
-  /* Label */
   .ds-tree-node-label {
     flex: 1;
     white-space: nowrap;
@@ -555,18 +557,16 @@ export const DsTreeNodeList = defineComponent({
     text-overflow: ellipsis;
   }
 
-  /* Empty */
   .ds-tree-select-empty {
-    padding: var(--ds-spacing-3, 0.75rem) var(--ds-spacing-4, 1rem);
+    padding: 0.75rem 1rem;
     text-align: center;
-    color: var(--ds-on-surface-variant, #6b7b82);
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    color: var(--ds-muted-foreground, #717182);
+    font-size: 0.875rem;
   }
 
-  /* Fade transition */
   .ds-tree-select-fade-enter-active,
   .ds-tree-select-fade-leave-active {
-    transition: opacity 0.15s, transform 0.15s;
+    transition: opacity 150ms cubic-bezier(0.4,0,0.2,1), transform 150ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-tree-select-fade-enter-from,
@@ -574,5 +574,4 @@ export const DsTreeNodeList = defineComponent({
     opacity: 0;
     transform: translateY(-4px);
   }
-}
 </style>

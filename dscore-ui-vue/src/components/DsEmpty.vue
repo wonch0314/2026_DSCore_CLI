@@ -33,37 +33,37 @@ const isStyled = computed(() => props.applyDefaultStyle !== false && config.appl
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-empty {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--ds-spacing-2, 0.5rem);
-    padding: var(--ds-spacing-4, 1rem);
-    color: var(--ds-on-surface-variant, #5a6970);
+    gap: 0.5rem;
+    padding: 1rem;
+    color: var(--ds-muted-foreground, #717182);
   }
 
   .ds-empty__icon {
     opacity: 0.5;
-    margin-bottom: var(--ds-spacing-2, 0.5rem);
+    margin-bottom: 0.5rem;
+    color: var(--ds-muted-foreground, #717182);
   }
 
   .ds-empty__title {
-    font-size: var(--ds-font-size-base, 1rem);
+    font-size: 1rem;
     font-weight: 500;
-    color: var(--ds-on-surface-variant, #5a6970);
+    color: var(--ds-muted-foreground, #717182);
   }
 
   .ds-empty__description {
-    font-size: var(--ds-font-size-sm, 0.875rem);
-    color: var(--ds-on-surface-variant, #5a6970);
+    font-size: 0.875rem;
+    color: var(--ds-muted-foreground, #717182);
     opacity: 0.7;
     text-align: center;
   }
 
   .ds-empty__action {
-    margin-top: var(--ds-spacing-3, 0.75rem);
+    margin-top: 0.75rem;
   }
-}
 </style>

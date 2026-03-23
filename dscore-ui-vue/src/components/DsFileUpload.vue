@@ -189,11 +189,11 @@ const removeFile = (index: number) => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-file-upload {
     display: flex;
     flex-direction: column;
-    gap: var(--ds-spacing-2, 0.5rem);
+    gap: 0.5rem;
     font-family: var(--ds-font-family, inherit);
   }
 
@@ -207,17 +207,18 @@ const removeFile = (index: number) => {
   }
 
   .ds-file-upload__zone {
-    border: 1px dashed var(--ds-outline-variant, rgba(169, 180, 185, 0.4));
-    padding: var(--ds-spacing-8, 2rem);
+    border: 1px dashed var(--ds-border, rgba(0,0,0,0.1));
+    padding: 2rem;
     text-align: center;
     cursor: pointer;
-    border-radius: 0px;
-    transition: background var(--ds-transition-normal, 250ms ease), border-color var(--ds-transition-normal, 250ms ease);
+    border-radius: 0.375rem;
+    transition: background 250ms cubic-bezier(0.4,0,0.2,1),
+                border-color 250ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-file-upload__zone--drag-over {
-    background: var(--ds-surface-container-low, rgba(169, 180, 185, 0.06));
-    border-color: var(--ds-primary, #5f5e5e);
+    background: var(--ds-accent, #e9ebef);
+    border-color: var(--ds-primary, #030213);
   }
 
   .ds-file-upload--disabled .ds-file-upload__zone {
@@ -229,23 +230,23 @@ const removeFile = (index: number) => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--ds-spacing-2, 0.5rem);
+    gap: 0.5rem;
   }
 
   .ds-file-upload__icon {
-    color: var(--ds-on-surface-variant, rgba(100, 110, 115, 0.7));
+    color: var(--ds-muted-foreground, #717182);
   }
 
   .ds-file-upload__zone-text {
     margin: 0;
-    font-size: var(--ds-font-size-sm, 0.75rem);
-    color: var(--ds-on-surface-variant, rgba(100, 110, 115, 0.7));
+    font-size: 0.875rem;
+    color: var(--ds-muted-foreground, #717182);
   }
 
   .ds-file-upload__zone-hint {
     margin: 0;
-    font-size: var(--ds-font-size-sm, 0.75rem);
-    color: var(--ds-on-surface-variant, rgba(100, 110, 115, 0.7));
+    font-size: 0.75rem;
+    color: var(--ds-muted-foreground, #717182);
     opacity: 0.7;
   }
 
@@ -259,24 +260,24 @@ const removeFile = (index: number) => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--ds-spacing-2, 0.5rem) 0;
-    border-bottom: var(--ds-ghost-border, 1px solid rgba(169, 180, 185, 0.2));
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--ds-border, rgba(0,0,0,0.1));
   }
 
   .ds-file-upload__file-info {
     display: flex;
     flex-direction: column;
-    gap: var(--ds-spacing-1, 0.25rem);
+    gap: 0.25rem;
   }
 
   .ds-file-upload__file-name {
-    font-size: var(--ds-font-size-sm, 0.75rem);
-    color: var(--ds-on-surface, inherit);
+    font-size: 0.875rem;
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-file-upload__file-size {
-    font-size: var(--ds-font-size-sm, 0.75rem);
-    color: var(--ds-on-surface-variant, rgba(100, 110, 115, 0.7));
+    font-size: 0.75rem;
+    color: var(--ds-muted-foreground, #717182);
   }
 
   .ds-file-upload__file-remove {
@@ -285,16 +286,15 @@ const removeFile = (index: number) => {
     justify-content: center;
     background: none;
     border: none;
-    padding: var(--ds-spacing-1, 0.25rem);
+    padding: 0.25rem;
     cursor: pointer;
-    color: var(--ds-on-surface-variant, rgba(100, 110, 115, 0.7));
+    color: var(--ds-muted-foreground, #717182);
     opacity: 0.5;
-    transition: opacity var(--ds-transition-normal, 250ms ease);
-    border-radius: 0px;
+    transition: opacity 150ms cubic-bezier(0.4,0,0.2,1);
+    border-radius: 0.25rem;
   }
 
   .ds-file-upload__file-remove:hover {
     opacity: 1;
   }
-}
 </style>

@@ -110,64 +110,110 @@ const handleClick = async (event: MouseEvent) => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-button {
     position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    padding: var(--ds-spacing-3, 0.75rem) var(--ds-spacing-6, 1.5rem);
-    background: var(--ds-primary, #5f5e5e);
-    color: var(--ds-on-primary, #faf7f6);
-    border: none;
-    border-radius: var(--ds-border-radius, 0px);
-    font-family: var(--ds-font-family, inherit);
-    font-size: var(--ds-font-size-md, 0.875rem);
+    gap: 0.5rem;
+    white-space: nowrap;
+    border-radius: var(--ds-radius-md, 0.5rem);
+    font-size: 0.875rem;
     font-weight: 500;
-    line-height: 1;
-    transition: opacity var(--ds-transition-normal, 250ms ease), background var(--ds-transition-normal, 250ms ease);
+    line-height: 1.5;
+    height: 2.25rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--ds-primary, #030213);
+    color: var(--ds-primary-foreground, #ffffff);
+    border: 1px solid transparent;
+    outline: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    overflow: visible;
+    box-sizing: border-box;
+    transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
     user-select: none;
+    font-family: inherit;
   }
 
   .ds-button:hover:not(:disabled) {
-    opacity: 0.88;
+    background: rgba(3, 2, 19, 0.9);
   }
 
-  .ds-button:active:not(:disabled) {
-    opacity: 0.76;
+  .ds-button:focus-visible {
+    border-color: var(--ds-ring, #a8a8a8);
+    box-shadow: 0 0 0 3px var(--ds-ring-color, rgba(168, 168, 168, 0.5));
   }
 
   .ds-button--disabled,
   .ds-button:disabled {
-    cursor: not-allowed;
     pointer-events: none;
     opacity: 0.5;
+    cursor: not-allowed;
   }
 
-  /* Secondary variant: ghost border, no fill */
+  /* Secondary (outline) */
   .ds-button--secondary {
-    background: transparent;
-    color: var(--ds-primary, #5f5e5e);
-    border: var(--ds-ghost-border, 1px solid rgba(169, 180, 185, 0.2));
+    background: var(--ds-background, #fff);
+    color: var(--ds-foreground, #1a1a1a);
+    border: 1px solid var(--ds-border, rgba(0, 0, 0, 0.1));
   }
 
   .ds-button--secondary:hover:not(:disabled) {
-    opacity: 1;
-    background: rgba(95, 94, 94, 0.06);
+    background: var(--ds-accent, #e9ebef);
   }
 
-  /* Tertiary variant: no border/fill, bottom-border on hover */
+  /* Ghost */
+  .ds-button--ghost {
+    background: transparent;
+    border-color: transparent;
+    color: var(--ds-foreground, #1a1a1a);
+  }
+
+  .ds-button--ghost:hover:not(:disabled) {
+    background: var(--ds-accent, #e9ebef);
+  }
+
+  /* Tertiary — kept for backward compat, maps to ghost behavior */
   .ds-button--tertiary {
     background: transparent;
-    color: var(--ds-primary, #5f5e5e);
-    border: none;
-    border-bottom: 1px solid transparent;
+    border-color: transparent;
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-button--tertiary:hover:not(:disabled) {
-    opacity: 1;
-    border-bottom-color: var(--ds-primary, #5f5e5e);
+    background: var(--ds-accent, #e9ebef);
+  }
+
+  /* Destructive */
+  .ds-button--destructive {
+    background: var(--ds-destructive, #d4183d);
+    color: var(--ds-destructive-foreground, #fff);
+  }
+
+  .ds-button--destructive:hover:not(:disabled) {
+    background: rgba(212, 24, 61, 0.9);
+  }
+
+  /* Size sm */
+  .ds-button--sm {
+    height: 2rem;
+    padding: 0 0.75rem;
+    gap: 0.375rem;
+  }
+
+  /* Size lg */
+  .ds-button--lg {
+    height: 2.5rem;
+    padding: 0 1.5rem;
+  }
+
+  /* Size icon */
+  .ds-button--icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
   }
 
   .ds-button-spinner {
@@ -192,11 +238,10 @@ const handleClick = async (event: MouseEvent) => {
   .ds-button-content {
     display: inline-flex;
     align-items: center;
-    gap: 0.5em;
+    gap: 0.5rem;
   }
 
   .ds-button-content--hidden {
     visibility: hidden;
   }
-}
 </style>

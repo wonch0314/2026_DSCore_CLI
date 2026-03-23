@@ -50,31 +50,29 @@ defineSlots<{
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-description {
     display: grid;
-    gap: var(--ds-spacing-4, 1rem);
+    gap: 1rem;
     margin: 0;
   }
 
   .ds-description__item {
     display: flex;
     flex-direction: column;
-    gap: var(--ds-spacing-1, 0.25rem);
+    gap: 0.25rem;
   }
 
   .ds-description--horizontal .ds-description__item {
     flex-direction: row;
     align-items: baseline;
-    gap: var(--ds-spacing-3, 0.75rem);
+    gap: 0.75rem;
   }
 
   .ds-description__label {
-    font-size: var(--ds-font-size-xs, 0.75rem);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: var(--ds-letter-spacing-wide, 0.06em);
-    color: var(--ds-on-surface-variant, #5a6970);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--ds-muted-foreground, #717182);
     white-space: nowrap;
   }
 
@@ -83,9 +81,8 @@ defineSlots<{
   }
 
   .ds-description__value {
-    font-size: var(--ds-font-size-md, 1rem);
-    color: var(--ds-on-surface, #2a3439);
+    font-size: 0.875rem;
+    color: var(--ds-foreground, #1a1a1a);
     margin: 0;
   }
-}
 </style>

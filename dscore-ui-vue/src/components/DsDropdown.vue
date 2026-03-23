@@ -87,7 +87,7 @@ defineExpose({ open, close, toggle })
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-dropdown {
     position: relative;
     display: inline-flex;
@@ -95,7 +95,7 @@ defineExpose({ open, close, toggle })
 
   .ds-dropdown--disabled {
     pointer-events: none;
-    opacity: 0.5;
+    opacity: 0.45;
   }
 
   .ds-dropdown__trigger {
@@ -104,40 +104,59 @@ defineExpose({ open, close, toggle })
 
   .ds-dropdown__menu {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 4px);
     left: 0;
-    z-index: 100;
-    min-width: 160px;
-    background: var(--ds-surface-container-lowest, #fff);
-    border: var(--ds-ghost-border, 1px solid rgba(169, 180, 185, 0.2));
-    box-shadow: var(--ds-shadow-ambient, 0 4px 24px rgba(0, 0, 0, 0.08));
-    border-radius: 0px;
-    padding: var(--ds-spacing-2, 0.5rem) 0;
+    z-index: 50;
+    min-width: 8rem;
+    background: var(--ds-popover, #fff);
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+    border-radius: 0.375rem;
+    padding: 0.25rem;
   }
 
   .ds-dropdown__item {
-    padding: var(--ds-spacing-2, 0.5rem) var(--ds-spacing-4, 1rem);
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.5rem;
     cursor: pointer;
-    font-size: var(--ds-font-size-sm, 0.8125rem);
-    color: var(--ds-on-surface, #2a3439);
+    font-size: 0.875rem;
+    color: var(--ds-popover-foreground, #1a1a1a);
     font-family: var(--ds-font-family, inherit);
-    transition: background var(--ds-transition-fast, 150ms ease);
+    background: none;
+    border: none;
+    text-align: left;
+    border-radius: 0.125rem;
+    transition: background 150ms cubic-bezier(0.4,0,0.2,1);
+    line-height: 1.5;
   }
 
   .ds-dropdown__item:hover {
-    background: var(--ds-surface-container-low, rgba(169, 180, 185, 0.08));
+    background: var(--ds-accent, #e9ebef);
+    color: var(--ds-accent-foreground, #030213);
   }
 
-  /* Transition */
+  .ds-dropdown__item--active,
+  .ds-dropdown__item[aria-selected="true"] {
+    background: var(--ds-accent, #e9ebef);
+    font-weight: 500;
+  }
+
+  .ds-dropdown__divider {
+    height: 1px;
+    background: var(--ds-border, rgba(0,0,0,0.1));
+    margin: 0.25rem 0;
+  }
+
   .ds-dropdown-enter-active,
   .ds-dropdown-leave-active {
-    transition: opacity var(--ds-transition-fast, 150ms ease), transform var(--ds-transition-fast, 150ms ease);
+    transition: opacity 150ms cubic-bezier(0.4,0,0.2,1),
+                transform 150ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-dropdown-enter-from,
   .ds-dropdown-leave-to {
     opacity: 0;
-    transform: translateY(-4px);
+    transform: translateY(-6px);
   }
-}
 </style>

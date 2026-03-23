@@ -49,23 +49,32 @@ const sizeValue = computed(() => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-spinner {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: currentColor;
+    flex-shrink: 0;
   }
 
   .ds-spinner svg {
     width: 100%;
     height: 100%;
-    animation: ds-spin 0.8s linear infinite;
+    animation: ds-spin 0.75s linear infinite;
+    will-change: transform;
+  }
+
+  .ds-spinner-track {
+    opacity: 0.2;
+  }
+
+  .ds-spinner-head {
+    opacity: 1;
   }
 
   @keyframes ds-spin {
     from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    to   { transform: rotate(360deg); }
   }
-}
 </style>

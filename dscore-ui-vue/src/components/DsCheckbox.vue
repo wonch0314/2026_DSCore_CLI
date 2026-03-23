@@ -94,20 +94,22 @@ const handleKeydown = (event: KeyboardEvent) => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-checkbox {
     display: inline-flex;
     align-items: center;
-    gap: var(--ds-spacing-2, 0.5rem);
+    gap: 0.5rem;
     cursor: pointer;
     user-select: none;
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
-    color: var(--ds-on-surface, #2a3439);
+    font-family: var(--ds-font-family, inherit);
+    font-size: var(--ds-font-size-sm, 0.875rem);
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-checkbox--disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
+    pointer-events: none;
   }
 
   .ds-checkbox-input {
@@ -115,6 +117,7 @@ const handleKeydown = (event: KeyboardEvent) => {
     opacity: 0;
     width: 0;
     height: 0;
+    pointer-events: none;
   }
 
   .ds-checkbox-box {
@@ -122,39 +125,52 @@ const handleKeydown = (event: KeyboardEvent) => {
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: 18px;
-    height: 18px;
-    border: 1px solid rgba(169, 180, 185, 0.4);
-    border-radius: var(--ds-border-radius, 0px);
-    background: transparent;
-    transition: background 0.15s, border-color 0.15s;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 4px;
+    border: 1px solid var(--ds-border, rgba(0, 0, 0, 0.1));
+    background: var(--ds-input-background, #f3f3f5);
+    box-shadow: var(--ds-shadow-xs, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+    transition: box-shadow var(--ds-transition-fast, 150ms cubic-bezier(0.4, 0, 0.2, 1));
+  }
+
+  .ds-checkbox:not(.ds-checkbox--disabled):hover .ds-checkbox-box {
+    box-shadow: 0 0 0 3px var(--ds-ring-color, rgba(168, 168, 168, 0.5));
   }
 
   .ds-checkbox--checked .ds-checkbox-box,
   .ds-checkbox--indeterminate .ds-checkbox-box {
-    background: var(--ds-primary, #5f5e5e);
-    border-color: var(--ds-primary, #5f5e5e);
+    background: var(--ds-primary, #030213);
+    border-color: var(--ds-primary, #030213);
+    box-shadow: none;
   }
 
   .ds-checkbox-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--ds-on-primary, #ffffff);
+    color: var(--ds-primary-foreground, #fff);
+    animation: ds-check-in 160ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
   }
 
   .ds-checkbox-icon svg {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
+    stroke-width: 3;
+  }
+
+  @keyframes ds-check-in {
+    from { opacity: 0; transform: scale(0.5); }
+    to   { opacity: 1; transform: scale(1); }
   }
 
   .ds-checkbox-label {
-    font-size: var(--ds-font-size-md, 0.9375rem);
+    font-size: var(--ds-font-size-sm, 0.875rem);
+    line-height: 1.5;
   }
 
   .ds-checkbox-box:focus-visible {
-    outline: 2px solid var(--ds-primary, #5f5e5e);
-    outline-offset: 2px;
+    border-color: var(--ds-ring, #a8a8a8);
+    box-shadow: 0 0 0 3px var(--ds-ring-color, rgba(168, 168, 168, 0.5));
   }
-}
 </style>

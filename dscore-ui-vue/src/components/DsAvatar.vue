@@ -62,15 +62,17 @@ const onError = () => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-avatar {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    border-radius: 0px;
-    background: var(--ds-surface-container, #e8eff3);
-    color: var(--ds-on-surface-variant, #5a6970);
+    border-radius: 9999px;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--ds-muted, #ececf0);
+    color: var(--ds-muted-foreground, #717182);
     flex-shrink: 0;
   }
 
@@ -78,21 +80,23 @@ const onError = () => {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
   }
 
   .ds-avatar__initials {
-    font-size: 0.4em;
+    font-size: 0.38em;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--ds-on-surface-variant, #5a6970);
+    letter-spacing: 0.06em;
+    color: var(--ds-muted-foreground, #717182);
     user-select: none;
+    line-height: 1;
   }
 
   .ds-avatar__icon {
-    width: 60%;
-    height: 60%;
-    color: var(--ds-on-surface-variant, #5a6970);
+    width: 52%;
+    height: 52%;
+    color: var(--ds-muted-foreground, #717182);
+    opacity: 0.7;
   }
-}
 </style>

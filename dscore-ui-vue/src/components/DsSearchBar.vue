@@ -71,31 +71,31 @@ const handleReset = () => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-search-bar {
-    background: var(--ds-surface-container-lowest);
-    border: var(--ds-ghost-border);
-    padding: var(--ds-spacing-6);
+    background: var(--ds-card, #fff);
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    border-radius: 0.75rem;
+    padding: 1.5rem;
   }
 
   .ds-search-bar__fields {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--ds-spacing-4);
+    gap: 1rem;
   }
 
   .ds-search-bar__actions {
     display: flex;
-    gap: var(--ds-spacing-2);
-    margin-top: var(--ds-spacing-4);
+    gap: 0.5rem;
+    margin-top: 1rem;
     justify-content: flex-end;
     align-items: center;
   }
 
   .ds-search-bar__search-btn,
   .ds-search-bar__reset-btn {
-    padding: var(--ds-spacing-2, 0.5rem) var(--ds-spacing-5, 1.25rem);
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
   }
-}
 </style>

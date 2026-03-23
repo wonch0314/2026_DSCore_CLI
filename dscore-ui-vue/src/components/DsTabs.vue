@@ -103,43 +103,48 @@ function onKeydown(event: KeyboardEvent, index: number) {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-tabs {
     display: flex;
     flex-direction: column;
   }
 
   .ds-tabs__list {
-    display: flex;
-    border-bottom: var(--ds-ghost-border-strong, 1px solid rgba(169, 180, 185, 0.4));
+    display: inline-flex;
+    align-items: center;
+    background: var(--ds-muted, #ececf0);
+    border-radius: 0.75rem;
+    padding: 3px;
+    height: 2.25rem;
+    gap: 2px;
   }
 
   .ds-tabs__tab {
-    padding: var(--ds-spacing-3, 0.75rem) var(--ds-spacing-4, 1rem);
+    padding: 0.25rem 0.5rem;
     border: none;
-    border-bottom: 2px solid transparent;
     background: transparent;
     cursor: pointer;
     font-family: var(--ds-font-family);
-    font-size: var(--ds-font-size-sm, 0.75rem);
+    font-size: 0.875rem;
     font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: var(--ds-letter-spacing-wide, 0.05em);
-    color: var(--ds-on-surface-variant, #6b7b82);
-    border-radius: var(--ds-border-radius, 0px);
-    transition: background var(--ds-transition-fast, 150ms ease), color var(--ds-transition-fast, 150ms ease);
-    margin-bottom: -1px;
-    line-height: var(--ds-line-height-tight, 1.2);
+    color: var(--ds-muted-foreground, #717182);
+    border-radius: 0.75rem;
+    transition: background 150ms cubic-bezier(0.4,0,0.2,1), color 150ms cubic-bezier(0.4,0,0.2,1);
+    line-height: 1.2;
+    white-space: nowrap;
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
   }
 
   .ds-tabs__tab:hover:not(:disabled):not(.ds-tabs__tab--active) {
-    background: var(--ds-surface-container-low, #f0f4f7);
-    color: var(--ds-on-surface, #2a3439);
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-tabs__tab--active {
-    border-bottom-color: var(--ds-primary, #5f5e5e);
-    color: var(--ds-on-surface, #2a3439);
+    background: var(--ds-card, #fff);
+    color: var(--ds-foreground, #1a1a1a);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   }
 
   .ds-tabs__tab--disabled,
@@ -150,11 +155,10 @@ function onKeydown(event: KeyboardEvent, index: number) {
   }
 
   .ds-tabs__panel {
-    padding: var(--ds-spacing-4, 1rem) 0;
+    padding: 1rem 0;
   }
 
   .ds-tabs__panel[hidden] {
     display: none;
   }
-}
 </style>

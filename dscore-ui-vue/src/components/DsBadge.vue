@@ -47,7 +47,7 @@ const showSup = computed(() => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-badge {
     position: relative;
     display: inline-flex;
@@ -58,24 +58,27 @@ const showSup = computed(() => {
     top: 0;
     right: 0;
     transform: translate(50%, -50%);
-    background: var(--ds-error, #9f403d);
-    color: var(--ds-on-primary, #fff);
-    font-size: var(--ds-font-size-xs, 0.625rem);
+    background: var(--ds-destructive, #d4183d);
+    color: #fff;
+    font-size: 10px;
     font-weight: 600;
     line-height: 1;
-    padding: 0.2em 0.45em;
-    border-radius: 0px;
+    padding: 2px 5px;
+    border-radius: 9999px;
     white-space: nowrap;
-    min-width: 1.25em;
-    text-align: center;
+    min-width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--ds-font-family, inherit);
   }
 
   .ds-badge__content--dot {
     width: 8px;
     height: 8px;
-    padding: 0;
     min-width: unset;
-    border-radius: 50%;
+    padding: 0;
+    border-radius: 9999px;
   }
-}
 </style>

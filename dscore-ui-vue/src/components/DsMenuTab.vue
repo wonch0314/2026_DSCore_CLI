@@ -102,7 +102,7 @@ function onKeydown(event: KeyboardEvent, index: number) {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-menu-tabs {
     display: flex;
     flex-direction: column;
@@ -111,7 +111,7 @@ function onKeydown(event: KeyboardEvent, index: number) {
   .ds-menu-tabs__list {
     display: flex;
     overflow-x: auto;
-    border-bottom: var(--ds-ghost-border-strong, 1px solid rgba(169, 180, 185, 0.4));
+    border-bottom: 1px solid var(--ds-border, rgba(0,0,0,0.1));
     scrollbar-width: none;
   }
 
@@ -122,34 +122,32 @@ function onKeydown(event: KeyboardEvent, index: number) {
   .ds-menu-tabs__tab {
     display: inline-flex;
     align-items: center;
-    gap: var(--ds-spacing-2, 0.5rem);
-    padding: var(--ds-spacing-2, 0.5rem) var(--ds-spacing-4, 1rem);
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
     border: none;
-    border-right: var(--ds-ghost-border, 1px solid rgba(169, 180, 185, 0.2));
     border-bottom: 2px solid transparent;
     background: transparent;
     cursor: pointer;
     font-family: var(--ds-font-family);
-    font-size: var(--ds-font-size-sm, 0.75rem);
+    font-size: 0.875rem;
     font-weight: 400;
-    color: var(--ds-on-surface-variant, #6b7b82);
-    border-radius: var(--ds-border-radius, 0px);
+    color: var(--ds-muted-foreground, #717182);
+    border-radius: 0;
     white-space: nowrap;
     flex-shrink: 0;
-    transition: background var(--ds-transition-fast, 150ms ease), color var(--ds-transition-fast, 150ms ease);
+    transition: background 150ms cubic-bezier(0.4,0,0.2,1), color 150ms cubic-bezier(0.4,0,0.2,1);
     margin-bottom: -1px;
-    line-height: var(--ds-line-height-tight, 1.2);
+    line-height: 1.2;
   }
 
   .ds-menu-tabs__tab:hover:not(.ds-menu-tabs__tab--active) {
-    background: var(--ds-surface-container-low, #f0f4f7);
-    color: var(--ds-on-surface, #2a3439);
+    background: var(--ds-accent, #e9ebef);
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-menu-tabs__tab--active {
-    background: var(--ds-surface-container-lowest, #ffffff);
-    border-bottom-color: var(--ds-primary, #5f5e5e);
-    color: var(--ds-on-surface, #2a3439);
+    border-bottom-color: var(--ds-primary, #030213);
+    color: var(--ds-foreground, #1a1a1a);
     font-weight: 500;
   }
 
@@ -165,13 +163,12 @@ function onKeydown(event: KeyboardEvent, index: number) {
     width: 16px;
     height: 16px;
     opacity: 0.5;
-    border-radius: var(--ds-border-radius, 0px);
-    transition: opacity var(--ds-transition-fast, 150ms ease);
+    border-radius: 0.25rem;
+    transition: opacity 150ms cubic-bezier(0.4,0,0.2,1);
     cursor: pointer;
   }
 
   .ds-menu-tabs__close:hover {
     opacity: 1;
   }
-}
 </style>

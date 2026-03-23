@@ -118,7 +118,7 @@ defineExpose({ open, close, toggle })
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-popover {
     display: inline-flex;
     align-items: center;
@@ -128,19 +128,19 @@ defineExpose({ open, close, toggle })
   .ds-popover__panel {
     position: fixed;
     z-index: 9998;
-    background: var(--ds-surface-container-lowest, #fff);
-    border: var(--ds-ghost-border, 1px solid rgba(169, 180, 185, 0.2));
-    box-shadow: var(--ds-shadow-ambient, 0 4px 24px rgba(0, 0, 0, 0.08));
-    border-radius: 0px;
-    padding: var(--ds-spacing-4, 1rem);
-    color: var(--ds-on-surface, #2a3439);
+    background: var(--ds-popover, #fff);
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+    border-radius: 0.375rem;
+    padding: 1rem;
+    width: 18rem;
+    color: var(--ds-popover-foreground, #1a1a1a);
     font-family: var(--ds-font-family, inherit);
   }
 
-  /* Transition */
   .ds-popover-enter-active,
   .ds-popover-leave-active {
-    transition: opacity var(--ds-transition-normal, 250ms ease), transform var(--ds-transition-normal, 250ms ease);
+    transition: opacity 150ms cubic-bezier(0.4,0,0.2,1), transform 150ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-popover-enter-from,
@@ -154,5 +154,4 @@ defineExpose({ open, close, toggle })
     opacity: 1;
     transform: scale(1);
   }
-}
 </style>

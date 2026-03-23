@@ -166,76 +166,101 @@ defineExpose({ close, tryClose })
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-modal-overlay {
     position: fixed;
     inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--ds-glass-bg, rgba(247, 249, 251, 0.7));
-    backdrop-filter: blur(var(--ds-glass-blur, 20px));
-    -webkit-backdrop-filter: blur(var(--ds-glass-blur, 20px));
+    background: rgba(0, 0, 0, 0.5);
     z-index: 1000;
+    padding: 1rem;
   }
 
   .ds-modal {
     position: relative;
-    background: var(--ds-surface-container-lowest, #ffffff);
-    box-shadow: var(--ds-shadow-ambient, 0 4px 24px rgba(0, 0, 0, 0.08));
-    border-radius: var(--ds-border-radius, 0px);
-    padding: var(--ds-spacing-8, 2rem);
+    background: var(--ds-background, #fff);
+    border-radius: 0.5rem;
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    min-width: 320px;
+    max-width: min(32rem, calc(100vw - 2rem));
     max-height: 90vh;
-    overflow: auto;
+    overflow-y: auto;
     outline: none;
-    color: var(--ds-on-surface, #2a3439);
+    color: var(--ds-foreground, #1a1a1a);
     font-family: var(--ds-font-family, inherit);
+  }
+
+  .ds-modal::-webkit-scrollbar {
+    width: 4px;
+  }
+  .ds-modal::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .ds-modal::-webkit-scrollbar-thumb {
+    background: var(--ds-border, rgba(0,0,0,0.1));
   }
 
   .ds-modal-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: var(--ds-spacing-4, 1rem);
+    gap: 1rem;
   }
 
   .ds-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    flex-shrink: 0;
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0.25rem;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--ds-on-surface, #2a3439);
-    border-radius: var(--ds-border-radius, 0px);
-    transition: opacity var(--ds-transition-normal, 250ms ease);
+    color: var(--ds-foreground, #1a1a1a);
+    opacity: 0.7;
+    border-radius: 0.25rem;
+    transition: opacity 150ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-modal-close:hover {
-    opacity: 0.6;
+    opacity: 1;
   }
 
   .ds-modal-close svg {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
+    stroke-width: 1.75;
   }
 
   .ds-modal-content {
-    flex: 1;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-modal-footer {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     gap: 0.5rem;
-    margin-top: var(--ds-spacing-6, 1.5rem);
   }
 
-  /* Transitions */
-  .ds-modal-enter-active,
+  .ds-modal-enter-active {
+    transition: opacity 250ms cubic-bezier(0.4,0,0.2,1);
+  }
   .ds-modal-leave-active {
-    transition: opacity var(--ds-transition-normal, 250ms ease);
+    transition: opacity 150ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-modal-enter-from,
@@ -243,14 +268,22 @@ defineExpose({ close, tryClose })
     opacity: 0;
   }
 
-  .ds-modal-enter-active .ds-modal,
+  .ds-modal-enter-active .ds-modal {
+    transition: transform 250ms cubic-bezier(0.4,0,0.2,1),
+                opacity 250ms cubic-bezier(0.4,0,0.2,1);
+  }
   .ds-modal-leave-active .ds-modal {
-    transition: transform var(--ds-transition-normal, 250ms ease);
+    transition: transform 150ms cubic-bezier(0.4,0,0.2,1),
+                opacity 150ms cubic-bezier(0.4,0,0.2,1);
   }
 
-  .ds-modal-enter-from .ds-modal,
-  .ds-modal-leave-to .ds-modal {
-    transform: scale(0.97);
+  .ds-modal-enter-from .ds-modal {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
   }
-}
+
+  .ds-modal-leave-to .ds-modal {
+    opacity: 0;
+    transform: translateY(6px) scale(0.99);
+  }
 </style>

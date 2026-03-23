@@ -97,34 +97,37 @@ onUnmounted(() => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-tooltip-trigger {
     display: inline-flex;
     align-items: center;
+    cursor: default;
   }
 
   .ds-tooltip {
     position: fixed;
     z-index: 9999;
-    background: var(--ds-on-surface, #2a3439);
-    color: var(--ds-surface-container-lowest, #fff);
-    padding: var(--ds-spacing-1, 0.25rem) var(--ds-spacing-3, 0.75rem);
-    font-size: var(--ds-font-size-xs, 0.75rem);
-    border-radius: 0px;
+    background: var(--ds-primary, #030213);
+    color: var(--ds-primary-foreground, #fff);
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
     pointer-events: none;
     white-space: nowrap;
     font-family: var(--ds-font-family, inherit);
+    line-height: 1.4;
   }
 
-  /* Transition */
   .ds-tooltip-enter-active,
   .ds-tooltip-leave-active {
-    transition: opacity var(--ds-transition-fast, 150ms ease);
+    transition: opacity 150ms cubic-bezier(0.4,0,0.2,1),
+                transform 150ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-tooltip-enter-from,
   .ds-tooltip-leave-to {
     opacity: 0;
+    transform: translateY(2px) scale(0.97);
   }
-}
 </style>

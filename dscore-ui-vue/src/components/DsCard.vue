@@ -29,37 +29,42 @@ const isStyled = computed(() => props.applyDefaultStyle !== false && config.appl
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-card {
-    background: var(--ds-surface-container-lowest, #fff);
-    border: var(--ds-ghost-border, 1px solid rgba(169, 180, 185, 0.2));
-    border-radius: var(--ds-border-radius, 0px);
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
-    color: var(--ds-on-surface, #1a1a1a);
+    background: var(--ds-card, #fff);
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    border-radius: 0.75rem;
+    color: var(--ds-card-foreground, #1a1a1a);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
   .ds-card--elevated {
-    box-shadow: var(--ds-shadow-ambient);
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+  }
+
+  .ds-card--flat {
+    box-shadow: none;
+    background: var(--ds-muted, #ececf0);
   }
 
   .ds-card__header {
-    padding: var(--ds-spacing-6, 1.5rem) var(--ds-spacing-6, 1.5rem) 0;
+    padding: 1.5rem 1.5rem 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ds-card-foreground, #1a1a1a);
   }
 
   .ds-card__body {
-    padding: var(--ds-spacing-6, 1.5rem);
+    padding: 0 1.5rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
   }
 
   .ds-card__footer {
-    padding: 0 var(--ds-spacing-6, 1.5rem) var(--ds-spacing-6, 1.5rem);
+    padding: 0 1.5rem 1.5rem;
+    font-size: 0.875rem;
+    color: var(--ds-muted-foreground, #717182);
   }
-
-  .ds-card__header + .ds-card__body {
-    padding-top: var(--ds-spacing-8, 2rem);
-  }
-
-  .ds-card__body + .ds-card__footer {
-    padding-top: 0;
-  }
-}
 </style>

@@ -115,13 +115,11 @@ defineExpose({ close })
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-drawer-overlay {
     position: fixed;
     inset: 0;
-    background: var(--ds-glass-bg, rgba(247, 249, 251, 0.7));
-    backdrop-filter: blur(var(--ds-glass-blur, 20px));
-    -webkit-backdrop-filter: blur(var(--ds-glass-blur, 20px));
+    background: rgba(0, 0, 0, 0.5);
     z-index: 1000;
   }
 
@@ -131,43 +129,49 @@ defineExpose({ close })
     bottom: 0;
     display: flex;
     flex-direction: column;
-    background: var(--ds-surface-container-lowest, #fff);
-    box-shadow: var(--ds-shadow-ambient, 0 4px 24px rgba(0, 0, 0, 0.08));
+    background: var(--ds-background, #fff);
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
     z-index: 1001;
-    color: var(--ds-on-surface, #2a3439);
+    color: var(--ds-foreground, #1a1a1a);
     font-family: var(--ds-font-family, inherit);
-  }
-
-  .ds-drawer--right {
-    right: 0;
   }
 
   .ds-drawer--left {
     left: 0;
+    border-right: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    border-radius: 0;
+  }
+
+  .ds-drawer--right {
+    right: 0;
+    border-left: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    border-radius: 0;
   }
 
   .ds-drawer__header {
-    padding: var(--ds-spacing-6, 1.5rem);
-    border-bottom: var(--ds-ghost-border, 1px solid rgba(169, 180, 185, 0.2));
+    padding: 1rem;
+    border-bottom: 1px solid var(--ds-border, rgba(0,0,0,0.1));
     flex-shrink: 0;
+    font-size: 1rem;
+    font-weight: 600;
   }
 
   .ds-drawer__body {
-    padding: var(--ds-spacing-6, 1.5rem);
+    padding: 1rem;
     overflow-y: auto;
     flex: 1;
+    font-size: 0.875rem;
   }
 
   .ds-drawer__footer {
-    padding: var(--ds-spacing-4, 1rem) var(--ds-spacing-6, 1.5rem);
-    border-top: var(--ds-ghost-border, 1px solid rgba(169, 180, 185, 0.2));
+    padding: 1rem;
+    border-top: 1px solid var(--ds-border, rgba(0,0,0,0.1));
     flex-shrink: 0;
   }
 
-  /* Overlay transition */
   .ds-drawer-overlay-enter-active,
   .ds-drawer-overlay-leave-active {
-    transition: opacity var(--ds-transition-normal, 250ms ease);
+    transition: opacity 250ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-drawer-overlay-enter-from,
@@ -175,10 +179,9 @@ defineExpose({ close })
     opacity: 0;
   }
 
-  /* Right slide transition */
   .ds-drawer-right-enter-active,
   .ds-drawer-right-leave-active {
-    transition: transform var(--ds-transition-normal, 250ms ease);
+    transition: transform 250ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-drawer-right-enter-from,
@@ -186,15 +189,13 @@ defineExpose({ close })
     transform: translateX(100%);
   }
 
-  /* Left slide transition */
   .ds-drawer-left-enter-active,
   .ds-drawer-left-leave-active {
-    transition: transform var(--ds-transition-normal, 250ms ease);
+    transition: transform 250ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-drawer-left-enter-from,
   .ds-drawer-left-leave-to {
     transform: translateX(-100%);
   }
-}
 </style>
