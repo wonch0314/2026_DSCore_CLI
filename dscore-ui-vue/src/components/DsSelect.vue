@@ -17,6 +17,7 @@ interface Props {
   searchable?: boolean
   clearable?: boolean
   disabled?: boolean
+  applyDefaultStyle?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -25,7 +26,8 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: '선택하세요',
   searchable: false,
   clearable: false,
-  disabled: false
+  disabled: false,
+  applyDefaultStyle: undefined
 })
 
 const emit = defineEmits<{
@@ -34,6 +36,8 @@ const emit = defineEmits<{
 }>()
 
 const config = useDsConfig()
+
+const isStyled = computed(() => props.applyDefaultStyle !== false && config.applyDefaultStyle !== false)
 
 const isOpen = ref(false)
 const searchQuery = ref('')
@@ -144,32 +148,32 @@ onUnmounted(() => {
 <template>
   <div
     ref="selectRef"
-    class="ds-select"
-    :class="{
-      'ds-select--open': isOpen,
-      'ds-select--disabled': disabled,
-      'ds-select--clearable': clearable && modelValue != null
-    }"
+    :class="[
+      isStyled && 'ds-select',
+      isStyled && isOpen && 'ds-select--open',
+      isStyled && disabled && 'ds-select--disabled',
+      isStyled && clearable && modelValue != null && 'ds-select--clearable'
+    ]"
     @keydown="handleKeydown"
   >
     <div
-      class="ds-select-trigger"
+      :class="isStyled && 'ds-select-trigger'"
       tabindex="0"
       role="combobox"
       :aria-expanded="isOpen"
       @click="toggle"
     >
-      <span v-if="selectedOption" class="ds-select-value">
+      <span v-if="selectedOption" :class="isStyled && 'ds-select-value'">
         {{ displayValue }}
       </span>
-      <span v-else class="ds-select-placeholder">
+      <span v-else :class="isStyled && 'ds-select-placeholder'">
         {{ placeholder }}
       </span>
 
       <button
         v-if="clearable && modelValue != null"
         type="button"
-        class="ds-select-clear"
+        :class="isStyled && 'ds-select-clear'"
         @click="clear"
         aria-label="Clear"
       >
@@ -179,7 +183,7 @@ onUnmounted(() => {
         </svg>
       </button>
 
-      <span class="ds-select-arrow">
+      <span :class="isStyled && 'ds-select-arrow'">
         <component v-if="ArrowIcon" :is="ArrowIcon" />
         <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="6 9 12 15 18 9" />
@@ -188,44 +192,42 @@ onUnmounted(() => {
     </div>
 
     <Transition name="ds-select-dropdown">
-      <div v-if="isOpen" class="ds-select-dropdown">
+      <div v-if="isOpen" :class="isStyled && 'ds-select-dropdown'">
         <input
           v-if="searchable"
           v-model="searchQuery"
-          class="ds-select-search"
+          :class="isStyled && 'ds-select-search'"
           type="text"
           placeholder="검색..."
           @click.stop
         />
 
-        <div class="ds-select-options">
+        <div :class="isStyled && 'ds-select-options'">
           <div
             v-for="(option, index) in filteredOptions"
             :key="option.value"
-            class="ds-select-option"
             :class="[
-              `ds-select-option-${option.value}`,
-              {
-                'ds-select-option--selected': option.value === modelValue,
-                'ds-select-option--highlighted': index === highlightedIndex,
-                'ds-select-option--disabled': option.disabled
-              }
+              isStyled && 'ds-select-option',
+              isStyled && `ds-select-option-${option.value}`,
+              isStyled && option.value === modelValue && 'ds-select-option--selected',
+              isStyled && index === highlightedIndex && 'ds-select-option--highlighted',
+              isStyled && option.disabled && 'ds-select-option--disabled'
             ]"
             @click="select(option)"
             @mouseenter="highlightedIndex = index"
           >
             <slot name="option" :option="option" :selected="option.value === modelValue" :highlighted="index === highlightedIndex">
-              <component v-if="option.icon" :is="option.icon" class="ds-select-option-icon" />
-              <div class="ds-select-option-content">
-                <span class="ds-select-option-label">{{ option.label }}</span>
-                <span v-if="option.description" class="ds-select-option-description">
+              <component v-if="option.icon" :is="option.icon" :class="isStyled && 'ds-select-option-icon'" />
+              <div :class="isStyled && 'ds-select-option-content'">
+                <span :class="isStyled && 'ds-select-option-label'">{{ option.label }}</span>
+                <span v-if="option.description" :class="isStyled && 'ds-select-option-description'">
                   {{ option.description }}
                 </span>
               </div>
             </slot>
           </div>
 
-          <div v-if="filteredOptions.length === 0" class="ds-select-empty">
+          <div v-if="filteredOptions.length === 0" :class="isStyled && 'ds-select-empty'">
             검색 결과가 없습니다
           </div>
         </div>
@@ -235,132 +237,159 @@ onUnmounted(() => {
 </template>
 
 <style>
-.ds-select {
-  position: relative;
-  display: inline-block;
-}
+@layer ds-base {
+  .ds-select {
+    position: relative;
+    display: inline-block;
+    font-family: var(--ds-font-family, 'Inter', sans-serif);
+    font-size: var(--ds-font-size-md, 0.9375rem);
+    color: var(--ds-on-surface, #2a3439);
+  }
 
-.ds-select--disabled {
-  opacity: 0.6;
-  pointer-events: none;
-}
+  .ds-select--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
 
-.ds-select-trigger {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-}
+  .ds-select-trigger {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: var(--ds-spacing-2, 0.5rem) 0;
+    border-bottom: 1px solid var(--ds-outline, #8a979d);
+    transition: border-bottom-color 0.15s;
+  }
 
-.ds-select-value {
-  flex: 1;
-}
+  .ds-select-trigger:focus {
+    outline: none;
+    border-bottom: 2px solid var(--ds-primary, #5f5e5e);
+  }
 
-.ds-select-placeholder {
-  flex: 1;
-  opacity: 0.5;
-}
+  .ds-select--open .ds-select-trigger {
+    border-bottom: 2px solid var(--ds-primary, #5f5e5e);
+  }
 
-.ds-select-clear,
-.ds-select-arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  .ds-select-value {
+    flex: 1;
+  }
 
-.ds-select-clear {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
+  .ds-select-placeholder {
+    flex: 1;
+    color: var(--ds-on-surface-variant, #6b7b82);
+    opacity: 0.6;
+  }
 
-.ds-select-clear svg,
-.ds-select-arrow svg {
-  width: 16px;
-  height: 16px;
-}
+  .ds-select-clear,
+  .ds-select-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-.ds-select-arrow {
-  transition: transform 0.2s;
-}
+  .ds-select-clear {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--ds-on-surface-variant, #6b7b82);
+  }
 
-.ds-select--open .ds-select-arrow {
-  transform: rotate(180deg);
-}
+  .ds-select-clear svg,
+  .ds-select-arrow svg {
+    width: 16px;
+    height: 16px;
+  }
 
-.ds-select-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 4px;
-  margin-top: 4px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
+  .ds-select-arrow {
+    transition: transform 0.2s;
+    color: var(--ds-on-surface-variant, #6b7b82);
+  }
 
-.ds-select-search {
-  width: 100%;
-  padding: 0.5rem;
-  border: none;
-  border-bottom: 1px solid #e5e7eb;
-  outline: none;
-}
+  .ds-select--open .ds-select-arrow {
+    transform: rotate(180deg);
+  }
 
-.ds-select-options {
-  max-height: 200px;
-  overflow-y: auto;
-}
+  .ds-select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--ds-surface-container-lowest, #fff);
+    border: 1px solid rgba(169, 180, 185, 0.2);
+    border-radius: var(--ds-border-radius, 0px);
+    margin-top: 4px;
+    box-shadow: var(--ds-shadow-ambient, 0 2px 8px rgba(42, 52, 57, 0.08));
+  }
 
-.ds-select-option {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  cursor: pointer;
-}
+  .ds-select-search {
+    width: 100%;
+    padding: var(--ds-spacing-2, 0.5rem);
+    border: none;
+    border-bottom: 1px solid rgba(169, 180, 185, 0.2);
+    outline: none;
+    font-family: var(--ds-font-family, 'Inter', sans-serif);
+    font-size: var(--ds-font-size-md, 0.9375rem);
+    color: var(--ds-on-surface, #2a3439);
+    background: transparent;
+  }
 
-.ds-select-option--highlighted {
-  background-color: #f3f4f6;
-}
+  .ds-select-options {
+    max-height: 200px;
+    overflow-y: auto;
+  }
 
-.ds-select-option--selected {
-  background-color: #eff6ff;
-}
+  .ds-select-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: var(--ds-spacing-2, 0.5rem) var(--ds-spacing-3, 0.75rem);
+    cursor: pointer;
+    transition: background 0.1s;
+  }
 
-.ds-select-option--disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+  .ds-select-option--highlighted {
+    background-color: var(--ds-surface-container-low, #f0f4f7);
+  }
 
-.ds-select-option-content {
-  display: flex;
-  flex-direction: column;
-}
+  .ds-select-option--selected {
+    background-color: var(--ds-surface-container-highest, #d9e4ea);
+  }
 
-.ds-select-option-description {
-  font-size: 0.875em;
-  opacity: 0.7;
-}
+  .ds-select-option--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
-.ds-select-empty {
-  padding: 1rem;
-  text-align: center;
-  color: #9ca3af;
-}
+  .ds-select-option-content {
+    display: flex;
+    flex-direction: column;
+  }
 
-/* Transitions */
-.ds-select-dropdown-enter-active,
-.ds-select-dropdown-leave-active {
-  transition: opacity 0.15s, transform 0.15s;
-}
+  .ds-select-option-description {
+    font-size: var(--ds-font-size-sm, 0.875rem);
+    opacity: 0.7;
+    color: var(--ds-on-surface-variant, #6b7b82);
+  }
 
-.ds-select-dropdown-enter-from,
-.ds-select-dropdown-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
+  .ds-select-empty {
+    padding: 1rem;
+    text-align: center;
+    color: var(--ds-on-surface-variant, #6b7b82);
+    font-size: var(--ds-font-size-sm, 0.875rem);
+  }
+
+  /* Transitions */
+  .ds-select-dropdown-enter-active,
+  .ds-select-dropdown-leave-active {
+    transition: opacity 0.15s, transform 0.15s;
+  }
+
+  .ds-select-dropdown-enter-from,
+  .ds-select-dropdown-leave-to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
 }
 </style>

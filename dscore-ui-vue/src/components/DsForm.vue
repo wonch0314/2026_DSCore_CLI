@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { ref, provide, reactive, computed, watch } from 'vue'
+import { useDsConfig } from '../plugin'
 
 interface Props {
   model?: Record<string, any>
   initialData?: Record<string, any>
   warnOnLeave?: boolean
+  applyDefaultStyle?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   model: () => ({}),
-  warnOnLeave: false
+  warnOnLeave: false,
+  applyDefaultStyle: undefined
 })
 
 const emit = defineEmits<{
@@ -17,6 +20,10 @@ const emit = defineEmits<{
   'reset': []
   'validate': [isValid: boolean]
 }>()
+
+const config = useDsConfig()
+
+const isStyled = computed(() => props.applyDefaultStyle !== false && config.applyDefaultStyle !== false)
 
 const fields = ref<Map<string, { validate: () => boolean; reset: () => void }>>(new Map())
 const isSubmitting = ref(false)
@@ -111,15 +118,19 @@ defineExpose({
 </script>
 
 <template>
-  <form class="ds-form" @submit="handleSubmit">
+  <form :class="isStyled && 'ds-form'" @submit="handleSubmit">
     <slot />
   </form>
 </template>
 
 <style>
-.ds-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+@layer ds-base {
+  .ds-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-spacing-4, 1rem);
+    font-family: var(--ds-font-family, 'Inter', sans-serif);
+    color: var(--ds-on-surface, #2a3439);
+  }
 }
 </style>

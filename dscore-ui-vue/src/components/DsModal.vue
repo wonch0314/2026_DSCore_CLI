@@ -10,6 +10,7 @@ interface Props {
   showClose?: boolean
   confirmBeforeClose?: boolean
   confirmMessage?: string
+  applyDefaultStyle?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -18,7 +19,8 @@ const props = withDefaults(defineProps<Props>(), {
   closeOnEsc: undefined,
   showClose: true,
   confirmBeforeClose: false,
-  confirmMessage: '변경사항이 있습니다. 닫으시겠습니까?'
+  confirmMessage: '변경사항이 있습니다. 닫으시겠습니까?',
+  applyDefaultStyle: undefined
 })
 
 const emit = defineEmits<{
@@ -28,6 +30,8 @@ const emit = defineEmits<{
 }>()
 
 const config = useDsConfig()
+
+const isStyled = computed(() => props.applyDefaultStyle !== false && config.applyDefaultStyle !== false)
 
 const modalRef = ref<HTMLElement | null>(null)
 const previousActiveElement = ref<HTMLElement | null>(null)
@@ -121,22 +125,22 @@ defineExpose({ close, tryClose })
     <Transition name="ds-modal">
       <div
         v-if="isOpen"
-        class="ds-modal-overlay"
+        :class="isStyled && 'ds-modal-overlay'"
         @click="handleOverlayClick"
       >
         <div
           ref="modalRef"
-          class="ds-modal"
+          :class="isStyled && 'ds-modal'"
           role="dialog"
           aria-modal="true"
           tabindex="-1"
         >
-          <div v-if="$slots.header || showClose" class="ds-modal-header">
+          <div v-if="$slots.header || showClose" :class="isStyled && 'ds-modal-header'">
             <slot name="header" />
             <button
               v-if="showClose"
               type="button"
-              class="ds-modal-close"
+              :class="isStyled && 'ds-modal-close'"
               @click="tryClose"
               aria-label="Close"
             >
@@ -148,11 +152,11 @@ defineExpose({ close, tryClose })
             </button>
           </div>
 
-          <div class="ds-modal-content">
+          <div :class="isStyled && 'ds-modal-content'">
             <slot />
           </div>
 
-          <div v-if="$slots.footer" class="ds-modal-footer">
+          <div v-if="$slots.footer" :class="isStyled && 'ds-modal-footer'">
             <slot name="footer" />
           </div>
         </div>
@@ -162,73 +166,91 @@ defineExpose({ close, tryClose })
 </template>
 
 <style>
-.ds-modal-overlay {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-}
+@layer ds-base {
+  .ds-modal-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ds-glass-bg, rgba(247, 249, 251, 0.7));
+    backdrop-filter: blur(var(--ds-glass-blur, 20px));
+    -webkit-backdrop-filter: blur(var(--ds-glass-blur, 20px));
+    z-index: 1000;
+  }
 
-.ds-modal {
-  position: relative;
-  background: white;
-  max-height: 90vh;
-  overflow: auto;
-  outline: none;
-}
+  .ds-modal {
+    position: relative;
+    background: var(--ds-surface-container-lowest, #ffffff);
+    box-shadow: var(--ds-shadow-ambient, 0 4px 24px rgba(0, 0, 0, 0.08));
+    border-radius: var(--ds-border-radius, 0px);
+    padding: var(--ds-spacing-8, 2rem);
+    max-height: 90vh;
+    overflow: auto;
+    outline: none;
+    color: var(--ds-on-surface, #2a3439);
+    font-family: var(--ds-font-family, inherit);
+  }
 
-.ds-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+  .ds-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--ds-spacing-4, 1rem);
+  }
 
-.ds-modal-close {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  .ds-modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ds-on-surface, #2a3439);
+    border-radius: var(--ds-border-radius, 0px);
+    transition: opacity var(--ds-transition-normal, 250ms ease);
+  }
 
-.ds-modal-close svg {
-  width: 20px;
-  height: 20px;
-}
+  .ds-modal-close:hover {
+    opacity: 0.6;
+  }
 
-.ds-modal-content {
-  flex: 1;
-}
+  .ds-modal-close svg {
+    width: 20px;
+    height: 20px;
+  }
 
-.ds-modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-}
+  .ds-modal-content {
+    flex: 1;
+  }
 
-/* Transitions */
-.ds-modal-enter-active,
-.ds-modal-leave-active {
-  transition: opacity 0.2s ease;
-}
+  .ds-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: var(--ds-spacing-6, 1.5rem);
+  }
 
-.ds-modal-enter-from,
-.ds-modal-leave-to {
-  opacity: 0;
-}
+  /* Transitions */
+  .ds-modal-enter-active,
+  .ds-modal-leave-active {
+    transition: opacity var(--ds-transition-normal, 250ms ease);
+  }
 
-.ds-modal-enter-active .ds-modal,
-.ds-modal-leave-active .ds-modal {
-  transition: transform 0.2s ease;
-}
+  .ds-modal-enter-from,
+  .ds-modal-leave-to {
+    opacity: 0;
+  }
 
-.ds-modal-enter-from .ds-modal,
-.ds-modal-leave-to .ds-modal {
-  transform: scale(0.95);
+  .ds-modal-enter-active .ds-modal,
+  .ds-modal-leave-active .ds-modal {
+    transition: transform var(--ds-transition-normal, 250ms ease);
+  }
+
+  .ds-modal-enter-from .ds-modal,
+  .ds-modal-leave-to .ds-modal {
+    transform: scale(0.97);
+  }
 }
 </style>

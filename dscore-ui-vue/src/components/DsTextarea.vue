@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, useAttrs } from 'vue'
+import { useDsConfig } from '../plugin'
 
 interface Props {
   modelValue?: string
   autoResize?: boolean
   minRows?: number
   maxRows?: number
+  applyDefaultStyle?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
   autoResize: true,
   minRows: 3,
-  maxRows: 10
+  maxRows: 10,
+  applyDefaultStyle: undefined
 })
 
 const emit = defineEmits<{
@@ -20,6 +23,10 @@ const emit = defineEmits<{
 }>()
 
 const attrs = useAttrs()
+const config = useDsConfig()
+
+const isStyled = computed(() => props.applyDefaultStyle !== false && config.applyDefaultStyle !== false)
+
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
 const adjustHeight = () => {
@@ -67,7 +74,7 @@ defineExpose({
 <template>
   <textarea
     ref="textareaRef"
-    class="ds-textarea"
+    :class="isStyled && 'ds-textarea'"
     :value="modelValue"
     v-bind="attrs"
     @input="handleInput"
@@ -75,8 +82,36 @@ defineExpose({
 </template>
 
 <style>
-.ds-textarea {
-  width: 100%;
-  resize: none;
+@layer ds-base {
+  .ds-textarea {
+    width: 100%;
+    resize: none;
+    display: block;
+    padding: var(--ds-spacing-2, 0.5rem) 0;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--ds-outline, #8a979d);
+    border-radius: 0;
+    outline: none;
+    font-family: var(--ds-font-family, 'Inter', sans-serif);
+    font-size: var(--ds-font-size-md, 0.9375rem);
+    color: var(--ds-on-surface, #2a3439);
+    line-height: var(--ds-line-height-normal, 1.5);
+    transition: border-bottom-color 0.15s;
+  }
+
+  .ds-textarea::placeholder {
+    color: var(--ds-on-surface-variant, #6b7b82);
+    opacity: 0.6;
+  }
+
+  .ds-textarea:focus {
+    border-bottom: 2px solid var(--ds-primary, #5f5e5e);
+  }
+
+  .ds-textarea:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 </style>

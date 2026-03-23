@@ -14,14 +14,17 @@ interface Toast {
 interface Props {
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'top-center' | 'bottom-center'
   duration?: number
+  applyDefaultStyle?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   position: 'top-right',
-  duration: 3000
+  duration: 3000,
+  applyDefaultStyle: undefined
 })
 
 const config = useDsConfig()
+const isStyled = computed(() => props.applyDefaultStyle !== false && config.applyDefaultStyle !== false)
 const toasts = ref<Toast[]>([])
 
 const positionClasses = computed(() => {
@@ -90,21 +93,20 @@ defineExpose({
 
 <template>
   <Teleport to="body">
-    <div class="ds-toast-container" :class="positionClasses">
+    <div :class="[isStyled && 'ds-toast-container', isStyled && positionClasses]">
       <TransitionGroup name="ds-toast">
         <div
           v-for="toast in toasts"
           :key="toast.id"
-          class="ds-toast"
-          :class="`ds-toast--${toast.type}`"
+          :class="[isStyled && 'ds-toast', isStyled && `ds-toast--${toast.type}`]"
         >
-          <span class="ds-toast-icon" v-html="getIcon(toast.type)" />
-          <span class="ds-toast-message">{{ toast.message }}</span>
-          <div v-if="toast.action || toast.cancel" class="ds-toast-actions">
+          <span :class="isStyled && 'ds-toast-icon'" v-html="getIcon(toast.type)" />
+          <span :class="isStyled && 'ds-toast-message'">{{ toast.message }}</span>
+          <div v-if="toast.action || toast.cancel" :class="isStyled && 'ds-toast-actions'">
             <button
               v-if="toast.action"
               type="button"
-              class="ds-toast-action"
+              :class="isStyled && 'ds-toast-action'"
               @click="toast.action.onClick(); removeToast(toast.id)"
             >
               {{ toast.action.label }}
@@ -112,7 +114,7 @@ defineExpose({
             <button
               v-if="toast.cancel"
               type="button"
-              class="ds-toast-cancel"
+              :class="isStyled && 'ds-toast-cancel'"
               @click="toast.cancel.onClick(); removeToast(toast.id)"
             >
               {{ toast.cancel.label }}
@@ -120,7 +122,7 @@ defineExpose({
           </div>
           <button
             type="button"
-            class="ds-toast-close"
+            :class="isStyled && 'ds-toast-close'"
             @click="removeToast(toast.id)"
             aria-label="Close"
           >
@@ -136,111 +138,117 @@ defineExpose({
 </template>
 
 <style>
-.ds-toast-container {
-  position: fixed;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 1rem;
-  pointer-events: none;
-}
+@layer ds-base {
+  .ds-toast-container {
+    position: fixed;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-spacing-2, 0.5rem);
+    padding: var(--ds-spacing-4, 1rem);
+    pointer-events: none;
+  }
 
-.ds-toast-container--top-right { top: 0; right: 0; }
-.ds-toast-container--top-left { top: 0; left: 0; }
-.ds-toast-container--top-center { top: 0; left: 50%; transform: translateX(-50%); }
-.ds-toast-container--bottom-right { bottom: 0; right: 0; }
-.ds-toast-container--bottom-left { bottom: 0; left: 0; }
-.ds-toast-container--bottom-center { bottom: 0; left: 50%; transform: translateX(-50%); }
+  .ds-toast-container--top-right { top: 0; right: 0; }
+  .ds-toast-container--top-left { top: 0; left: 0; }
+  .ds-toast-container--top-center { top: 0; left: 50%; transform: translateX(-50%); }
+  .ds-toast-container--bottom-right { bottom: 0; right: 0; }
+  .ds-toast-container--bottom-left { bottom: 0; left: 0; }
+  .ds-toast-container--bottom-center { bottom: 0; left: 50%; transform: translateX(-50%); }
 
-.ds-toast {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  background: white;
-  border-radius: 0.375rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  pointer-events: auto;
-  min-width: 300px;
-  max-width: 420px;
-}
+  .ds-toast {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-spacing-3, 0.75rem);
+    padding: var(--ds-spacing-3, 0.75rem) var(--ds-spacing-4, 1rem);
+    background: var(--ds-surface-container-lowest, #fff);
+    border-radius: 0px;
+    border: 1px solid rgba(169, 180, 185, 0.2);
+    box-shadow: 0 10px 40px 0 rgba(42, 52, 57, 0.04);
+    pointer-events: auto;
+    min-width: 300px;
+    max-width: 420px;
+    color: var(--ds-on-surface, #2a3439);
+    font-size: var(--ds-font-size-sm, 0.875rem);
+  }
 
-.ds-toast--success { border-left: 4px solid #10b981; }
-.ds-toast--error { border-left: 4px solid #ef4444; }
-.ds-toast--warning { border-left: 4px solid #f59e0b; }
-.ds-toast--info { border-left: 4px solid #3b82f6; }
+  .ds-toast--success { border-left: 3px solid var(--ds-success, #3d7a4a); }
+  .ds-toast--error { border-left: 3px solid var(--ds-error, #9f403d); }
+  .ds-toast--warning { border-left: 3px solid var(--ds-warning, #8a6d2b); }
+  .ds-toast--info { border-left: 3px solid var(--ds-info, #3d6b8a); }
 
-.ds-toast-icon {
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-}
+  .ds-toast-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+  }
 
-.ds-toast--success .ds-toast-icon { color: #10b981; }
-.ds-toast--error .ds-toast-icon { color: #ef4444; }
-.ds-toast--warning .ds-toast-icon { color: #f59e0b; }
-.ds-toast--info .ds-toast-icon { color: #3b82f6; }
+  .ds-toast--success .ds-toast-icon { color: var(--ds-success, #3d7a4a); }
+  .ds-toast--error .ds-toast-icon { color: var(--ds-error, #9f403d); }
+  .ds-toast--warning .ds-toast-icon { color: var(--ds-warning, #8a6d2b); }
+  .ds-toast--info .ds-toast-icon { color: var(--ds-info, #3d6b8a); }
 
-.ds-toast-message {
-  flex: 1;
-}
+  .ds-toast-message {
+    flex: 1;
+  }
 
-.ds-toast-actions {
-  display: flex;
-  gap: 0.5rem;
-}
+  .ds-toast-actions {
+    display: flex;
+    gap: var(--ds-spacing-2, 0.5rem);
+  }
 
-.ds-toast-action,
-.ds-toast-cancel {
-  background: none;
-  border: none;
-  padding: 0.25rem 0.5rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  border-radius: 0.25rem;
-}
+  .ds-toast-action,
+  .ds-toast-cancel {
+    background: none;
+    border: none;
+    padding: var(--ds-spacing-1, 0.25rem) var(--ds-spacing-2, 0.5rem);
+    cursor: pointer;
+    font-size: var(--ds-font-size-sm, 0.875rem);
+    border-radius: 0px;
+  }
 
-.ds-toast-action {
-  color: #3b82f6;
-  font-weight: 500;
-}
+  .ds-toast-action {
+    color: var(--ds-primary, #5f5e5e);
+    font-weight: 500;
+  }
 
-.ds-toast-cancel {
-  color: #6b7280;
-}
+  .ds-toast-cancel {
+    color: var(--ds-on-surface-variant, #5a6970);
+  }
 
-.ds-toast-close {
-  background: none;
-  border: none;
-  padding: 0.25rem;
-  cursor: pointer;
-  opacity: 0.5;
-  transition: opacity 0.15s;
-}
+  .ds-toast-close {
+    background: none;
+    border: none;
+    padding: var(--ds-spacing-1, 0.25rem);
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.15s;
+    color: var(--ds-on-surface, #2a3439);
+  }
 
-.ds-toast-close:hover {
-  opacity: 1;
-}
+  .ds-toast-close:hover {
+    opacity: 1;
+  }
 
-.ds-toast-close svg {
-  width: 16px;
-  height: 16px;
-}
+  .ds-toast-close svg {
+    width: 16px;
+    height: 16px;
+  }
 
-/* Transitions */
-.ds-toast-enter-active,
-.ds-toast-leave-active {
-  transition: all 0.3s ease;
-}
+  /* Transitions */
+  .ds-toast-enter-active,
+  .ds-toast-leave-active {
+    transition: all 0.3s ease;
+  }
 
-.ds-toast-enter-from {
-  opacity: 0;
-  transform: translateX(100%);
-}
+  .ds-toast-enter-from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
 
-.ds-toast-leave-to {
-  opacity: 0;
-  transform: translateX(100%);
+  .ds-toast-leave-to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
 }
 </style>

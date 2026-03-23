@@ -7,10 +7,12 @@ interface Props {
   value: string | number | boolean
   disabled?: boolean
   checkIcon?: object
+  applyDefaultStyle?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  disabled: false
+  disabled: false,
+  applyDefaultStyle: undefined
 })
 
 const emit = defineEmits<{
@@ -20,6 +22,8 @@ const emit = defineEmits<{
 
 const config = useDsConfig()
 const groupContext = inject<{ modelValue: any; updateValue: (v: any) => void } | null>('ds-radio-group', null)
+
+const isStyled = computed(() => props.applyDefaultStyle !== false && config.applyDefaultStyle !== false)
 
 const isChecked = computed(() => {
   const currentValue = groupContext?.modelValue ?? props.modelValue
@@ -48,81 +52,91 @@ const handleKeydown = (event: KeyboardEvent) => {
 
 <template>
   <label
-    class="ds-radio"
-    :class="{
-      'ds-radio--checked': isChecked,
-      'ds-radio--disabled': disabled
-    }"
+    :class="[
+      isStyled && 'ds-radio',
+      isStyled && isChecked && 'ds-radio--checked',
+      isStyled && disabled && 'ds-radio--disabled'
+    ]"
   >
     <input
       type="radio"
-      class="ds-radio-input"
+      :class="isStyled && 'ds-radio-input'"
       :checked="isChecked"
       :disabled="disabled"
       :value="value"
       @change="handleChange"
     />
     <span
-      class="ds-radio-circle"
+      :class="isStyled && 'ds-radio-circle'"
       tabindex="0"
       role="radio"
       :aria-checked="isChecked"
       @keydown="handleKeydown"
     >
-      <span v-if="isChecked" class="ds-radio-dot" />
+      <span v-if="isChecked" :class="isStyled && 'ds-radio-dot'" />
     </span>
-    <span v-if="$slots.default" class="ds-radio-label">
+    <span v-if="$slots.default" :class="isStyled && 'ds-radio-label'">
       <slot />
     </span>
   </label>
 </template>
 
 <style>
-.ds-radio {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-  user-select: none;
-}
+@layer ds-base {
+  .ds-radio {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ds-spacing-2, 0.5rem);
+    cursor: pointer;
+    user-select: none;
+    font-family: var(--ds-font-family, 'Inter', sans-serif);
+    color: var(--ds-on-surface, #2a3439);
+  }
 
-.ds-radio--disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
+  .ds-radio--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 
-.ds-radio-input {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+  .ds-radio-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
 
-.ds-radio-circle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--ds-radio-size, 20px);
-  height: var(--ds-radio-size, 20px);
-  border: var(--ds-radio-border, 2px solid #d1d5db);
-  border-radius: 50%;
-  background: var(--ds-radio-bg, white);
-  transition: all 0.15s;
-}
+  .ds-radio-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border: 1px solid rgba(169, 180, 185, 0.4);
+    border-radius: var(--ds-border-radius, 0px);
+    background: transparent;
+    transition: background 0.15s, border-color 0.15s;
+  }
 
-.ds-radio--checked .ds-radio-circle {
-  border-color: var(--ds-radio-checked-border, #3b82f6);
-}
+  .ds-radio--checked .ds-radio-circle {
+    background: var(--ds-primary, #5f5e5e);
+    border-color: var(--ds-primary, #5f5e5e);
+  }
 
-.ds-radio-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--ds-radio-dot-color, #3b82f6);
-}
+  .ds-radio-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--ds-border-radius, 0px);
+    background: var(--ds-on-primary, #ffffff);
+  }
 
-.ds-radio-circle:focus-visible {
-  outline: 2px solid var(--ds-radio-focus-ring, #3b82f6);
-  outline-offset: 2px;
+  .ds-radio-label {
+    font-size: var(--ds-font-size-md, 0.9375rem);
+  }
+
+  .ds-radio-circle:focus-visible {
+    outline: 2px solid var(--ds-primary, #5f5e5e);
+    outline-offset: 2px;
+  }
 }
 </style>

@@ -22,6 +22,43 @@ export { default as DsAlert } from './components/DsAlert.vue'
 export { default as DsProgress } from './components/DsProgress.vue'
 export { default as DsSkeleton } from './components/DsSkeleton.vue'
 
+// Components - Phase 4 Data Display
+export { default as DsTable } from './components/DsTable.vue'
+export { default as DsPagination } from './components/DsPagination.vue'
+export { default as DsEmpty } from './components/DsEmpty.vue'
+export { default as DsStatusTag } from './components/DsStatusTag.vue'
+export { default as DsBadge } from './components/DsBadge.vue'
+export { default as DsAvatar } from './components/DsAvatar.vue'
+export { default as DsDescription } from './components/DsDescription.vue'
+export { default as DsStatCard } from './components/DsStatCard.vue'
+
+// Components - Phase 5 Navigation & Layout
+export { default as DsTabs } from './components/DsTabs.vue'
+export { default as DsMenuTab } from './components/DsMenuTab.vue'
+export { default as DsBreadcrumb } from './components/DsBreadcrumb.vue'
+export { default as DsCard } from './components/DsCard.vue'
+export { default as DsCollapse } from './components/DsCollapse.vue'
+export { default as DsSteps } from './components/DsSteps.vue'
+export { default as DsTimeline } from './components/DsTimeline.vue'
+
+// Components - Phase 6 Overlay
+export { default as DsDropdown } from './components/DsDropdown.vue'
+export { default as DsTooltip } from './components/DsTooltip.vue'
+export { default as DsPopover } from './components/DsPopover.vue'
+export { default as DsDrawer } from './components/DsDrawer.vue'
+
+// Components - Phase 7 Advanced Inputs
+export { default as DsDatePicker } from './components/DsDatePicker.vue'
+export { default as DsDateRangePicker } from './components/DsDateRangePicker.vue'
+export { default as DsTagInput } from './components/DsTagInput.vue'
+export { default as DsFileUpload } from './components/DsFileUpload.vue'
+export { default as DsTreeSelect } from './components/DsTreeSelect.vue'
+export { default as DsTransfer } from './components/DsTransfer.vue'
+
+// Components - Phase 8 BO Layout
+export { default as DsSearchBar } from './components/DsSearchBar.vue'
+export { default as DsActionBar } from './components/DsActionBar.vue'
+
 // Plugin
 export { DsCore, useDsConfig } from './plugin'
 

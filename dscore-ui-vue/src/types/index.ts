@@ -1,6 +1,7 @@
 import type { Component } from 'vue'
 
 export interface DsCoreOptions {
+  applyDefaultStyle?: boolean
   spinner?: Component
   icons?: {
     check?: Component

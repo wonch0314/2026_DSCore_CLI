@@ -7,12 +7,14 @@ interface Props {
   closable?: boolean
   icon?: object
   showIcon?: boolean
+  applyDefaultStyle?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   type: 'info',
   closable: false,
-  showIcon: true
+  showIcon: true,
+  applyDefaultStyle: undefined
 })
 
 const emit = defineEmits<{
@@ -20,6 +22,7 @@ const emit = defineEmits<{
 }>()
 
 const config = useDsConfig()
+const isStyled = computed(() => props.applyDefaultStyle !== false && config.applyDefaultStyle !== false)
 const visible = ref(true)
 
 const AlertIcon = computed(() => props.icon || config.icons?.[props.type])
@@ -45,21 +48,20 @@ const getDefaultIcon = (type: string) => {
   <Transition name="ds-alert">
     <div
       v-if="visible"
-      class="ds-alert"
-      :class="`ds-alert--${type}`"
+      :class="[isStyled && 'ds-alert', isStyled && `ds-alert--${type}`]"
       role="alert"
     >
-      <span v-if="showIcon" class="ds-alert-icon">
+      <span v-if="showIcon" :class="isStyled && 'ds-alert-icon'">
         <component v-if="AlertIcon" :is="AlertIcon" />
         <span v-else v-html="getDefaultIcon(type)" />
       </span>
-      <div class="ds-alert-content">
+      <div :class="isStyled && 'ds-alert-content'">
         <slot />
       </div>
       <button
         v-if="closable"
         type="button"
-        class="ds-alert-close"
+        :class="isStyled && 'ds-alert-close'"
         @click="close"
         aria-label="Close"
       >
@@ -74,60 +76,75 @@ const getDefaultIcon = (type: string) => {
 </template>
 
 <style>
-.ds-alert {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  border-radius: 0.375rem;
-}
+@layer ds-base {
+  .ds-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ds-spacing-3, 0.75rem);
+    padding: var(--ds-spacing-4, 1rem);
+    border-radius: 0px;
+  }
 
-.ds-alert--success { background: #ecfdf5; color: #065f46; }
-.ds-alert--error { background: #fef2f2; color: #991b1b; }
-.ds-alert--warning { background: #fffbeb; color: #92400e; }
-.ds-alert--info { background: #eff6ff; color: #1e40af; }
+  .ds-alert--info {
+    background: var(--ds-info-container, #f0f6fa);
+    color: var(--ds-info, #3d6b8a);
+  }
+  .ds-alert--success {
+    background: var(--ds-success-container, #edf6f0);
+    color: var(--ds-success, #3d7a4a);
+  }
+  .ds-alert--warning {
+    background: var(--ds-warning-container, #f9f3e6);
+    color: var(--ds-warning, #8a6d2b);
+  }
+  .ds-alert--error {
+    background: var(--ds-error-container, #faf0f0);
+    color: var(--ds-error, #9f403d);
+  }
 
-.ds-alert-icon {
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-}
+  .ds-alert-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+  }
 
-.ds-alert-icon svg {
-  width: 100%;
-  height: 100%;
-}
+  .ds-alert-icon svg {
+    width: 100%;
+    height: 100%;
+  }
 
-.ds-alert-content {
-  flex: 1;
-}
+  .ds-alert-content {
+    flex: 1;
+    font-size: var(--ds-font-size-sm, 0.875rem);
+  }
 
-.ds-alert-close {
-  flex-shrink: 0;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  opacity: 0.5;
-}
+  .ds-alert-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    opacity: 0.5;
+  }
 
-.ds-alert-close:hover {
-  opacity: 1;
-}
+  .ds-alert-close:hover {
+    opacity: 1;
+  }
 
-.ds-alert-close svg {
-  width: 16px;
-  height: 16px;
-}
+  .ds-alert-close svg {
+    width: 16px;
+    height: 16px;
+  }
 
-.ds-alert-enter-active,
-.ds-alert-leave-active {
-  transition: all 0.2s ease;
-}
+  .ds-alert-enter-active,
+  .ds-alert-leave-active {
+    transition: all 0.2s ease;
+  }
 
-.ds-alert-enter-from,
-.ds-alert-leave-to {
-  opacity: 0;
-  transform: translateY(-8px);
+  .ds-alert-enter-from,
+  .ds-alert-leave-to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
 }
 </style>

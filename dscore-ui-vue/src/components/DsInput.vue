@@ -9,13 +9,15 @@ interface Props {
   debounce?: number
   rules?: ValidationRule[]
   error?: string
+  applyDefaultStyle?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: '',
   debounce: undefined,
   rules: () => [],
-  error: ''
+  error: '',
+  applyDefaultStyle: undefined
 })
 
 const emit = defineEmits<{
@@ -25,6 +27,8 @@ const emit = defineEmits<{
 
 const attrs = useAttrs()
 const config = useDsConfig()
+
+const isStyled = computed(() => props.applyDefaultStyle !== false && config.applyDefaultStyle !== false)
 
 const internalValue = ref(props.modelValue)
 const internalError = ref('')
@@ -106,31 +110,62 @@ defineExpose({
 </script>
 
 <template>
-  <div class="ds-input-wrapper" :class="{ 'ds-input-wrapper--error': hasError }">
+  <div :class="[isStyled && 'ds-input-wrapper', isStyled && hasError && 'ds-input-wrapper--error']">
     <input
-      class="ds-input"
+      :class="isStyled && 'ds-input'"
       :value="internalValue"
       v-bind="attrs"
       @input="handleInput"
       @blur="handleBlur"
     />
-    <span v-if="hasError" class="ds-input-error">{{ displayError }}</span>
+    <span v-if="hasError" :class="isStyled && 'ds-input-error'">{{ displayError }}</span>
   </div>
 </template>
 
 <style>
-.ds-input-wrapper {
-  display: flex;
-  flex-direction: column;
-}
+@layer ds-base {
+  .ds-input-wrapper {
+    display: flex;
+    flex-direction: column;
+  }
 
-.ds-input {
-  width: 100%;
-}
+  .ds-input {
+    width: 100%;
+    padding: var(--ds-spacing-2, 0.5rem) 0;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--ds-outline, #8a979d);
+    border-radius: 0;
+    outline: none;
+    font-family: var(--ds-font-family, inherit);
+    font-size: var(--ds-font-size-md, 0.875rem);
+    color: var(--ds-on-surface, #2a3439);
+    transition: border-color var(--ds-transition-normal, 250ms ease);
+    box-sizing: border-box;
+  }
 
-.ds-input-error {
-  font-size: 0.875em;
-  color: #ef4444;
-  margin-top: 0.25em;
+  .ds-input:focus {
+    border-bottom: 2px solid var(--ds-primary, #5f5e5e);
+  }
+
+  .ds-input::placeholder {
+    color: var(--ds-on-surface-variant, #8a979d);
+    opacity: 1;
+  }
+
+  .ds-input-wrapper--error .ds-input {
+    border-bottom-color: var(--ds-error, #ef4444);
+  }
+
+  .ds-input-wrapper--error .ds-input:focus {
+    border-bottom-color: var(--ds-error, #ef4444);
+  }
+
+  .ds-input-error {
+    font-size: 0.75rem;
+    color: var(--ds-error, #ef4444);
+    margin-top: 0.25em;
+    font-family: var(--ds-font-family, inherit);
+  }
 }
 </style>

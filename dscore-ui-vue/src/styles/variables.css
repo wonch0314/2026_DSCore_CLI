@@ -1,0 +1,156 @@
+/*
+ * dscore-ui-vue — Design Tokens
+ * Design System: "The Architectural Minimalist"
+ *
+ * All values are CSS custom properties so you can override them
+ * in your own stylesheet:
+ *
+ *   :root {
+ *     --ds-primary: #your-brand-color;
+ *     --ds-font-family: 'Your Font', sans-serif;
+ *   }
+ *
+ * Or scope overrides to a subtree:
+ *
+ *   .my-theme {
+ *     --ds-surface: #1a1a1a;
+ *     --ds-on-surface: #f0f0f0;
+ *   }
+ */
+
+/* ============================================================
+   COLOR TOKENS — Cool-toned neutrals
+   ============================================================ */
+:root {
+  /* Surface layers */
+  --ds-surface: #f7f9fb;
+  --ds-surface-container-lowest: #ffffff;
+  --ds-surface-container-low: #f0f4f7;
+  --ds-surface-container: #e8eff3;
+  --ds-surface-container-highest: #d9e4ea;
+
+  /* Primary actions */
+  --ds-primary: #5f5e5e;
+  --ds-primary-dim: #535252;
+  --ds-on-primary: #faf7f6;
+
+  /* Content / text */
+  --ds-on-surface: #2a3439;           /* Body text — not pure black */
+  --ds-on-surface-variant: #6b7b82;   /* Secondary / muted text */
+
+  /* Borders */
+  --ds-outline: #8a979d;
+  --ds-outline-variant: #a9b4b9;
+
+  /* Semantic */
+  --ds-error: #9f403d;
+  --ds-error-container: #fdf2f2;
+  --ds-success: #3d7a4a;
+  --ds-success-container: #f0f7f2;
+  --ds-warning: #8a6d2b;
+  --ds-warning-container: #fdf8ef;
+  --ds-info: #3d6b8a;
+  --ds-info-container: #f0f6fa;
+
+  /* ============================================================
+     TYPOGRAPHY — Inter
+     ============================================================ */
+  --ds-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Size scale */
+  --ds-font-size-xs: 0.6875rem;   /* 11px — label-sm */
+  --ds-font-size-sm: 0.75rem;     /* 12px — body-sm */
+  --ds-font-size-md: 0.875rem;    /* 14px — body-md */
+  --ds-font-size-base: 1rem;      /* 16px — body-lg */
+  --ds-font-size-lg: 1.25rem;     /* 20px — headline-sm */
+  --ds-font-size-xl: 1.5rem;      /* 24px — headline-md */
+  --ds-font-size-2xl: 2rem;       /* 32px — headline-lg */
+  --ds-font-size-3xl: 2.5rem;     /* 40px — display-sm */
+  --ds-font-size-4xl: 3.5rem;     /* 56px — display-lg */
+
+  /* Letter spacing */
+  --ds-letter-spacing-tight: -0.02em;
+  --ds-letter-spacing-wide: 0.05em;
+
+  /* Line height */
+  --ds-line-height-tight: 1.2;
+  --ds-line-height-normal: 1.5;
+  --ds-line-height-relaxed: 1.6;
+
+  /* ============================================================
+     SPACING SCALE
+     ============================================================ */
+  --ds-spacing-px: 1px;
+  --ds-spacing-0: 0;
+  --ds-spacing-1: 0.25rem;    /*  4px */
+  --ds-spacing-2: 0.5rem;     /*  8px */
+  --ds-spacing-3: 0.75rem;    /* 12px */
+  --ds-spacing-4: 1rem;       /* 16px */
+  --ds-spacing-5: 1.25rem;    /* 20px */
+  --ds-spacing-6: 1.5rem;     /* 24px */
+  --ds-spacing-8: 2rem;       /* 32px */
+  --ds-spacing-10: 2.5rem;    /* 40px */
+  --ds-spacing-12: 3rem;      /* 48px */
+  --ds-spacing-16: 5.5rem;    /* 88px */
+
+  /* ============================================================
+     ELEVATION & DEPTH
+     ============================================================ */
+  --ds-border-radius: 0px;   /* No rounded corners — ever */
+
+  /* Ghost borders (translucent) */
+  --ds-ghost-border: 1px solid rgba(169, 180, 185, 0.2);
+  --ds-ghost-border-strong: 1px solid rgba(169, 180, 185, 0.4);
+
+  /* Shadows */
+  --ds-shadow-ambient: 0 10px 40px 0 rgba(42, 52, 57, 0.04);
+
+  /* Glass */
+  --ds-glass-bg: rgba(247, 249, 251, 0.7);
+  --ds-glass-blur: 20px;
+
+  /* ============================================================
+     TRANSITIONS
+     ============================================================ */
+  --ds-transition-fast: 150ms ease;
+  --ds-transition-normal: 250ms ease;
+  --ds-transition-slow: 400ms ease;
+}
+
+/* ============================================================
+   COMPONENT BASE STYLES — in layer so user CSS always wins
+   ============================================================ */
+@layer ds-base {
+  /* BASE RESET — applies to all ds- prefixed elements */
+  [class^="ds-"],
+  [class*=" ds-"] {
+    box-sizing: border-box;
+    font-family: var(--ds-font-family);
+    color: var(--ds-on-surface);
+    line-height: var(--ds-line-height-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* FOCUS VISIBLE — outline-based, no box-shadow */
+  [class^="ds-"]:focus-visible,
+  [class*=" ds-"]:focus-visible {
+    outline: 2px solid var(--ds-primary);
+    outline-offset: 2px;
+  }
+
+  /*
+   * .ds-label
+   * Use for metadata labels, column headers, tags — small caps style.
+   * Matches label-sm token: 11px, uppercase, wide tracking.
+   */
+  .ds-label {
+    font-family: var(--ds-font-family);
+    font-size: var(--ds-font-size-xs);
+    font-weight: 500;
+    line-height: var(--ds-line-height-tight);
+    letter-spacing: var(--ds-letter-spacing-wide);
+    text-transform: uppercase;
+    color: var(--ds-on-surface-variant);
+  }
+}

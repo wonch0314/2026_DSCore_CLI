@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, provide } from 'vue'
 import DsRadio from './DsRadio.vue'
+import { useDsConfig } from '../plugin'
 
 interface Option {
   value: string | number | boolean
@@ -13,18 +14,24 @@ interface Props {
   options?: Option[]
   direction?: 'horizontal' | 'vertical'
   disabled?: boolean
+  applyDefaultStyle?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   options: () => [],
   direction: 'vertical',
-  disabled: false
+  disabled: false,
+  applyDefaultStyle: undefined
 })
 
 const emit = defineEmits<{
   'update:modelValue': [value: string | number | boolean]
   'change': [value: string | number | boolean]
 }>()
+
+const config = useDsConfig()
+
+const isStyled = computed(() => props.applyDefaultStyle !== false && config.applyDefaultStyle !== false)
 
 const updateValue = (value: string | number | boolean) => {
   emit('update:modelValue', value)
@@ -39,8 +46,7 @@ provide('ds-radio-group', {
 
 <template>
   <div
-    class="ds-radio-group"
-    :class="`ds-radio-group--${direction}`"
+    :class="[isStyled && 'ds-radio-group', isStyled && `ds-radio-group--${direction}`]"
     role="radiogroup"
   >
     <slot>
@@ -57,17 +63,19 @@ provide('ds-radio-group', {
 </template>
 
 <style>
-.ds-radio-group {
-  display: flex;
-}
+@layer ds-base {
+  .ds-radio-group {
+    display: flex;
+  }
 
-.ds-radio-group--vertical {
-  flex-direction: column;
-  gap: 0.5rem;
-}
+  .ds-radio-group--vertical {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 
-.ds-radio-group--horizontal {
-  flex-direction: row;
-  gap: 1rem;
+  .ds-radio-group--horizontal {
+    flex-direction: row;
+    gap: 1rem;
+  }
 }
 </style>

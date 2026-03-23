@@ -11,13 +11,15 @@ interface Props {
   placeholder?: string
   formatter?: (value: number) => string
   parser?: (value: string) => number
+  applyDefaultStyle?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: null,
   step: 1,
   disabled: false,
-  placeholder: ''
+  placeholder: '',
+  applyDefaultStyle: undefined
 })
 
 const emit = defineEmits<{
@@ -27,6 +29,8 @@ const emit = defineEmits<{
 
 const config = useDsConfig()
 const inputRef = ref<HTMLInputElement | null>(null)
+
+const isStyled = computed(() => props.applyDefaultStyle !== false && config.applyDefaultStyle !== false)
 
 const displayValue = computed(() => {
   if (props.modelValue === null || props.modelValue === undefined) return ''
@@ -95,12 +99,11 @@ defineExpose({
 
 <template>
   <div
-    class="ds-number-input"
-    :class="{ 'ds-number-input--disabled': disabled }"
+    :class="[isStyled && 'ds-number-input', isStyled && disabled && 'ds-number-input--disabled']"
   >
     <button
       type="button"
-      class="ds-number-input-btn ds-number-input-btn--decrement"
+      :class="[isStyled && 'ds-number-input-btn', isStyled && 'ds-number-input-btn--decrement']"
       :disabled="disabled || (min !== undefined && (modelValue ?? 0) <= min)"
       @click="decrement"
       aria-label="Decrease"
@@ -114,7 +117,7 @@ defineExpose({
     <input
       ref="inputRef"
       type="text"
-      class="ds-number-input-field"
+      :class="isStyled && 'ds-number-input-field'"
       :value="displayValue"
       :disabled="disabled"
       :placeholder="placeholder"
@@ -125,7 +128,7 @@ defineExpose({
 
     <button
       type="button"
-      class="ds-number-input-btn ds-number-input-btn--increment"
+      :class="[isStyled && 'ds-number-input-btn', isStyled && 'ds-number-input-btn--increment']"
       :disabled="disabled || (max !== undefined && (modelValue ?? 0) >= max)"
       @click="increment"
       aria-label="Increase"
@@ -140,43 +143,73 @@ defineExpose({
 </template>
 
 <style>
-.ds-number-input {
-  display: inline-flex;
-  align-items: center;
-}
+@layer ds-base {
+  .ds-number-input {
+    display: inline-flex;
+    align-items: stretch;
+    font-family: var(--ds-font-family, 'Inter', sans-serif);
+    color: var(--ds-on-surface, #2a3439);
+    border-bottom: 1px solid var(--ds-outline, #8a979d);
+    transition: border-bottom-color 0.15s;
+  }
 
-.ds-number-input--disabled {
-  opacity: 0.6;
-}
+  .ds-number-input:focus-within {
+    border-bottom: 2px solid var(--ds-primary, #5f5e5e);
+  }
 
-.ds-number-input-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  padding: 0.25rem;
-  cursor: pointer;
-}
+  .ds-number-input--disabled {
+    opacity: 0.6;
+  }
 
-.ds-number-input-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
+  .ds-number-input-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    border-left: 1px solid rgba(169, 180, 185, 0.2);
+    padding: var(--ds-spacing-1, 0.25rem) var(--ds-spacing-2, 0.5rem);
+    cursor: pointer;
+    color: var(--ds-on-surface-variant, #6b7b82);
+    transition: background 0.1s;
+  }
 
-.ds-number-input-btn svg {
-  width: 16px;
-  height: 16px;
-}
+  .ds-number-input-btn--decrement {
+    border-left: none;
+    border-right: 1px solid rgba(169, 180, 185, 0.2);
+    order: -1;
+  }
 
-.ds-number-input-field {
-  text-align: center;
-  width: 100%;
-}
+  .ds-number-input-btn:hover:not(:disabled) {
+    background: var(--ds-surface-container-low, #f0f4f7);
+  }
 
-.ds-number-input-field::-webkit-outer-spin-button,
-.ds-number-input-field::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+  .ds-number-input-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .ds-number-input-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .ds-number-input-field {
+    text-align: center;
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--ds-font-family, 'Inter', sans-serif);
+    font-size: var(--ds-font-size-md, 0.9375rem);
+    color: var(--ds-on-surface, #2a3439);
+    padding: var(--ds-spacing-2, 0.5rem) 0;
+  }
+
+  .ds-number-input-field::-webkit-outer-spin-button,
+  .ds-number-input-field::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }
 </style>

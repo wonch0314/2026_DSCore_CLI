@@ -11,6 +11,7 @@ interface Props {
   cancelText?: string
   type?: 'info' | 'warning' | 'danger'
   icon?: object
+  applyDefaultStyle?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -18,10 +19,12 @@ const props = withDefaults(defineProps<Props>(), {
   message: '',
   confirmText: '확인',
   cancelText: '취소',
-  type: 'info'
+  type: 'info',
+  applyDefaultStyle: undefined
 })
 
 const config = useDsConfig()
+const isStyled = computed(() => props.applyDefaultStyle !== false && config.applyDefaultStyle !== false)
 const isOpen = ref(false)
 const resolvePromise = ref<((value: boolean) => void) | null>(null)
 
@@ -58,17 +61,17 @@ defineExpose({ open, confirm, cancel })
 <template>
   <DsModal
     v-model="isOpen"
-    class="ds-confirm"
+    :class="isStyled && 'ds-confirm'"
     :close-on-overlay="false"
     :close-on-esc="true"
     :show-close="false"
     @close="cancel"
   >
     <template #header>
-      <div class="ds-confirm-header">
+      <div :class="isStyled && 'ds-confirm-header'">
         <span
           v-if="IconComponent || type"
-          class="ds-confirm-icon"
+          :class="isStyled && 'ds-confirm-icon'"
           :style="{ color: typeColors[type] }"
         >
           <component v-if="IconComponent" :is="IconComponent" />
@@ -88,27 +91,26 @@ defineExpose({ open, confirm, cancel })
             <line x1="12" y1="8" x2="12.01" y2="8"/>
           </svg>
         </span>
-        <span class="ds-confirm-title">{{ title }}</span>
+        <span :class="isStyled && 'ds-confirm-title'">{{ title }}</span>
       </div>
     </template>
 
     <template #default>
-      <div class="ds-confirm-message">
+      <div :class="isStyled && 'ds-confirm-message'">
         <slot>{{ message }}</slot>
       </div>
     </template>
 
     <template #footer>
-      <div class="ds-confirm-footer">
+      <div :class="isStyled && 'ds-confirm-footer'">
         <DsButton
-          class="ds-confirm-cancel"
+          :class="isStyled && 'ds-confirm-cancel'"
           @click="cancel"
         >
           {{ cancelText }}
         </DsButton>
         <DsButton
-          class="ds-confirm-ok"
-          :class="`ds-confirm-ok--${type}`"
+          :class="[isStyled && 'ds-confirm-ok', isStyled && `ds-confirm-ok--${type}`]"
           @click="confirm"
         >
           {{ confirmText }}
@@ -119,65 +121,71 @@ defineExpose({ open, confirm, cancel })
 </template>
 
 <style>
-.ds-confirm .ds-modal {
-  max-width: 400px;
-}
+@layer ds-base {
+  .ds-confirm .ds-modal {
+    max-width: 400px;
+    border-radius: 0px;
+  }
 
-.ds-confirm-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
+  .ds-confirm-header {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-spacing-3, 0.75rem);
+  }
 
-.ds-confirm-icon {
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-}
+  .ds-confirm-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+  }
 
-.ds-confirm-icon svg {
-  width: 100%;
-  height: 100%;
-}
+  .ds-confirm-icon svg {
+    width: 100%;
+    height: 100%;
+  }
 
-.ds-confirm-title {
-  font-weight: 600;
-  font-size: 1.125rem;
-}
+  .ds-confirm-title {
+    font-weight: 600;
+    font-size: var(--ds-font-size-lg, 1.125rem);
+    color: var(--ds-on-surface, #2a3439);
+  }
 
-.ds-confirm-message {
-  color: #6b7280;
-  line-height: 1.5;
-}
+  .ds-confirm-message {
+    color: var(--ds-on-surface-variant, #5a6970);
+    line-height: 1.5;
+    font-size: var(--ds-font-size-sm, 0.875rem);
+  }
 
-.ds-confirm-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-}
+  .ds-confirm-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--ds-spacing-3, 0.75rem);
+  }
 
-.ds-confirm-cancel {
-  background: #f3f4f6;
-  color: #374151;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-}
+  .ds-confirm-cancel {
+    background: var(--ds-surface-container-low, #f0f4f7);
+    color: var(--ds-on-surface, #2a3439);
+    padding: var(--ds-spacing-2, 0.5rem) var(--ds-spacing-4, 1rem);
+    border-radius: 0px;
+    border: 1px solid rgba(169, 180, 185, 0.2);
+  }
 
-.ds-confirm-ok {
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  color: white;
-}
+  .ds-confirm-ok {
+    padding: var(--ds-spacing-2, 0.5rem) var(--ds-spacing-4, 1rem);
+    border-radius: 0px;
+    color: var(--ds-on-primary, #fff);
+  }
 
-.ds-confirm-ok--info {
-  background: #3b82f6;
-}
+  .ds-confirm-ok--info {
+    background: var(--ds-info, #3d6b8a);
+  }
 
-.ds-confirm-ok--warning {
-  background: #f59e0b;
-}
+  .ds-confirm-ok--warning {
+    background: var(--ds-warning, #8a6d2b);
+  }
 
-.ds-confirm-ok--danger {
-  background: #ef4444;
+  .ds-confirm-ok--danger {
+    background: var(--ds-error, #9f403d);
+  }
 }
 </style>
