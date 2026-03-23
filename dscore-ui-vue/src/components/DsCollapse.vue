@@ -94,55 +94,65 @@ const onAfterLeave = (el: Element) => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-collapse {
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
-    color: var(--ds-on-surface, #1a1a1a);
-    border: var(--ds-ghost-border, 1px solid rgba(169, 180, 185, 0.2));
-    border-radius: var(--ds-border-radius, 0px);
+    color: var(--ds-foreground, #1a1a1a);
+    border-bottom: 1px solid var(--ds-border, rgba(0,0,0,0.1));
   }
 
   .ds-collapse__header {
-    padding: var(--ds-spacing-4, 1rem);
+    padding: 1rem 0;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
     user-select: none;
-    transition: background var(--ds-transition-normal, 250ms ease);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background 150ms cubic-bezier(0.4,0,0.2,1);
+    gap: 0.75rem;
   }
 
   .ds-collapse__header:hover {
-    background: var(--ds-surface-container-low, rgba(169, 180, 185, 0.08));
+    background: transparent;
+    opacity: 0.8;
   }
 
   .ds-collapse--disabled .ds-collapse__header {
-    opacity: 0.5;
+    opacity: 0.45;
     cursor: not-allowed;
   }
 
   .ds-collapse__arrow {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-left: 6px solid var(--ds-on-surface, #1a1a1a);
-    transition: transform var(--ds-transition-normal, 250ms ease);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    color: var(--ds-muted-foreground, #717182);
+    transition: transform 200ms cubic-bezier(0.4,0,0.2,1);
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+
+  .ds-collapse__arrow::before {
+    content: '▼';
   }
 
   .ds-collapse--open .ds-collapse__arrow {
-    transform: rotate(90deg);
+    transform: rotate(180deg);
   }
 
   .ds-collapse__content {
     overflow: hidden;
-    transition: height var(--ds-transition-normal, 250ms ease);
+    transition: height 250ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-collapse__content-inner {
-    padding: var(--ds-spacing-4, 1rem);
+    padding-bottom: 1rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--ds-foreground, #1a1a1a);
   }
-}
 </style>

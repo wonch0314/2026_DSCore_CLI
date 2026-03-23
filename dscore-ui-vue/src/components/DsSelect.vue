@@ -119,8 +119,9 @@ const handleKeydown = (event: KeyboardEvent) => {
       break
     case 'Enter':
       event.preventDefault()
-      if (highlightedIndex.value >= 0) {
-        select(filteredOptions.value[highlightedIndex.value])
+      {
+        const option = filteredOptions.value[highlightedIndex.value]
+        if (option) select(option)
       }
       break
     case 'Escape':
@@ -237,47 +238,57 @@ onUnmounted(() => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-select {
     position: relative;
     display: inline-block;
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
-    font-size: var(--ds-font-size-md, 0.9375rem);
-    color: var(--ds-on-surface, #2a3439);
+    font-family: var(--ds-font-family, inherit);
+    font-size: var(--ds-font-size-sm, 0.875rem);
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-select--disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     pointer-events: none;
   }
 
+  /* Trigger — same styling as DsInput */
   .ds-select-trigger {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     cursor: pointer;
-    padding: var(--ds-spacing-2, 0.5rem) 0;
-    border-bottom: 1px solid var(--ds-outline, #8a979d);
-    transition: border-bottom-color 0.15s;
+    height: 2.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--ds-radius-md, 0.375rem);
+    border: 1px solid var(--ds-border, rgba(0, 0, 0, 0.1));
+    background: var(--ds-input-background, #f3f3f5);
+    transition:
+      box-shadow var(--ds-transition-fast, 150ms cubic-bezier(0.4, 0, 0.2, 1));
+    user-select: none;
+    box-sizing: border-box;
   }
 
   .ds-select-trigger:focus {
     outline: none;
-    border-bottom: 2px solid var(--ds-primary, #5f5e5e);
+    border-color: var(--ds-ring, #a8a8a8);
+    box-shadow: 0 0 0 3px var(--ds-ring-color, rgba(168, 168, 168, 0.5));
   }
 
   .ds-select--open .ds-select-trigger {
-    border-bottom: 2px solid var(--ds-primary, #5f5e5e);
+    border-color: var(--ds-ring, #a8a8a8);
+    box-shadow: 0 0 0 3px var(--ds-ring-color, rgba(168, 168, 168, 0.5));
   }
 
   .ds-select-value {
     flex: 1;
+    font-size: var(--ds-font-size-sm, 0.875rem);
   }
 
   .ds-select-placeholder {
     flex: 1;
-    color: var(--ds-on-surface-variant, #6b7b82);
-    opacity: 0.6;
+    color: var(--ds-muted-foreground, #717182);
+    font-size: var(--ds-font-size-sm, 0.875rem);
   }
 
   .ds-select-clear,
@@ -285,105 +296,159 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
   }
 
   .ds-select-clear {
     background: none;
     border: none;
-    padding: 0;
+    padding: 2px;
     cursor: pointer;
-    color: var(--ds-on-surface-variant, #6b7b82);
+    color: var(--ds-muted-foreground, #717182);
+    transition: color var(--ds-transition-fast, 150ms cubic-bezier(0.4, 0, 0.2, 1));
+  }
+
+  .ds-select-clear:hover {
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-select-clear svg,
   .ds-select-arrow svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
   }
 
   .ds-select-arrow {
-    transition: transform 0.2s;
-    color: var(--ds-on-surface-variant, #6b7b82);
+    transition: transform var(--ds-transition-fast, 150ms cubic-bezier(0.4, 0, 0.2, 1));
+    color: var(--ds-muted-foreground, #717182);
   }
 
   .ds-select--open .ds-select-arrow {
     transform: rotate(180deg);
   }
 
+  /* Dropdown panel */
   .ds-select-dropdown {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 4px);
     left: 0;
     right: 0;
-    z-index: 100;
-    background: var(--ds-surface-container-lowest, #fff);
-    border: 1px solid rgba(169, 180, 185, 0.2);
-    border-radius: var(--ds-border-radius, 0px);
-    margin-top: 4px;
-    box-shadow: var(--ds-shadow-ambient, 0 2px 8px rgba(42, 52, 57, 0.08));
+    z-index: 50;
+    background: var(--ds-background, #fff);
+    border: 1px solid var(--ds-border, rgba(0, 0, 0, 0.1));
+    border-radius: var(--ds-radius-md, 0.375rem);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -2px rgba(0, 0, 0, 0.1);
   }
 
   .ds-select-search {
     width: 100%;
-    padding: var(--ds-spacing-2, 0.5rem);
+    padding: 0.5rem 0.75rem;
     border: none;
-    border-bottom: 1px solid rgba(169, 180, 185, 0.2);
+    border-bottom: 1px solid var(--ds-border, rgba(0, 0, 0, 0.1));
     outline: none;
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
-    font-size: var(--ds-font-size-md, 0.9375rem);
-    color: var(--ds-on-surface, #2a3439);
+    font-family: var(--ds-font-family, inherit);
+    font-size: var(--ds-font-size-sm, 0.875rem);
+    color: var(--ds-foreground, #1a1a1a);
     background: transparent;
+    box-sizing: border-box;
+  }
+
+  .ds-select-search::placeholder {
+    color: var(--ds-muted-foreground, #717182);
   }
 
   .ds-select-options {
-    max-height: 200px;
+    max-height: 224px;
     overflow-y: auto;
+    padding: 0.25rem 0;
+  }
+
+  .ds-select-options::-webkit-scrollbar {
+    width: 4px;
+  }
+  .ds-select-options::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .ds-select-options::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 2px;
   }
 
   .ds-select-option {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: var(--ds-spacing-2, 0.5rem) var(--ds-spacing-3, 0.75rem);
+    padding: 0.375rem 0.5rem 0.375rem 2rem;
     cursor: pointer;
-    transition: background 0.1s;
+    font-size: var(--ds-font-size-sm, 0.875rem);
+    transition: background var(--ds-transition-fast, 150ms cubic-bezier(0.4, 0, 0.2, 1));
   }
 
-  .ds-select-option--highlighted {
-    background-color: var(--ds-surface-container-low, #f0f4f7);
+  .ds-select-option--highlighted,
+  .ds-select-option:hover {
+    background: var(--ds-accent, #e9ebef);
   }
 
+  /* Selected: checkmark placeholder via left padding — check icon via pseudo */
   .ds-select-option--selected {
-    background-color: var(--ds-surface-container-highest, #d9e4ea);
+    font-weight: 500;
+  }
+
+  .ds-select-option--selected::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.875rem;
+    height: 0.875rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23030213' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
   }
 
   .ds-select-option--disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    pointer-events: none;
   }
 
   .ds-select-option-content {
     display: flex;
     flex-direction: column;
+    gap: 1px;
+  }
+
+  .ds-select-option-label {
+    line-height: 1.4;
   }
 
   .ds-select-option-description {
-    font-size: var(--ds-font-size-sm, 0.875rem);
-    opacity: 0.7;
-    color: var(--ds-on-surface-variant, #6b7b82);
+    font-size: 0.75rem;
+    color: var(--ds-muted-foreground, #717182);
+    line-height: 1.4;
   }
 
   .ds-select-empty {
     padding: 1rem;
     text-align: center;
-    color: var(--ds-on-surface-variant, #6b7b82);
+    color: var(--ds-muted-foreground, #717182);
     font-size: var(--ds-font-size-sm, 0.875rem);
   }
 
-  /* Transitions */
-  .ds-select-dropdown-enter-active,
+  .ds-select-dropdown-enter-active {
+    transition:
+      opacity var(--ds-transition-fast, 150ms cubic-bezier(0.4, 0, 0.2, 1)),
+      transform var(--ds-transition-fast, 150ms cubic-bezier(0.4, 0, 0.2, 1));
+  }
+
   .ds-select-dropdown-leave-active {
-    transition: opacity 0.15s, transform 0.15s;
+    transition:
+      opacity 100ms cubic-bezier(0.4, 0, 0.2, 1),
+      transform 100ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .ds-select-dropdown-enter-from,
@@ -391,5 +456,4 @@ onUnmounted(() => {
     opacity: 0;
     transform: translateY(-4px);
   }
-}
 </style>

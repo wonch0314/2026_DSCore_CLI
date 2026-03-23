@@ -36,7 +36,7 @@ const addTag = () => {
   if (!raw) return
   // Split by comma
   const parts = raw.split(',').map(s => s.trim()).filter(Boolean)
-  let tags = [...props.modelValue]
+  let tags = [...(props.modelValue ?? [])]
 
   for (const part of parts) {
     if (tags.length >= props.maxTags) break
@@ -50,7 +50,7 @@ const addTag = () => {
 }
 
 const removeTag = (tag: string, index: number) => {
-  const tags = [...props.modelValue]
+  const tags = [...(props.modelValue ?? [])]
   tags.splice(index, 1)
   emit('update:modelValue', tags)
   emit('remove', tag)
@@ -61,7 +61,7 @@ const handleKeydown = (e: KeyboardEvent) => {
     e.preventDefault()
     addTag()
   } else if (e.key === 'Backspace' && inputValue.value === '') {
-    const tags = [...props.modelValue]
+    const tags = [...(props.modelValue ?? [])]
     if (tags.length > 0) {
       const removed = tags.pop()!
       emit('update:modelValue', tags)
@@ -121,36 +121,44 @@ const handleInput = (e: Event) => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-tag-input {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--ds-spacing-1, 0.25rem);
-    padding: var(--ds-spacing-2, 0.5rem) 0;
-    border-bottom: 1px solid var(--ds-outline-variant, rgba(169, 180, 185, 0.4));
-    transition: border-color var(--ds-transition-normal, 250ms ease);
+    gap: 0.25rem;
+    padding: 0.5rem;
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    border-radius: 0.375rem;
+    background: var(--ds-background, #fff);
+    transition: border-color 150ms cubic-bezier(0.4,0,0.2,1),
+                box-shadow 150ms cubic-bezier(0.4,0,0.2,1);
+    min-height: 40px;
   }
 
   .ds-tag-input:focus-within {
-    border-bottom: 2px solid var(--ds-primary, #5f5e5e);
+    border-color: #a8a8a8;
+    box-shadow: 0 0 0 3px rgba(168,168,168,0.5);
   }
 
   .ds-tag-input--disabled {
-    opacity: 0.5;
+    opacity: 0.45;
     cursor: not-allowed;
+    pointer-events: none;
   }
 
   .ds-tag-input__tag {
     display: inline-flex;
     align-items: center;
-    gap: var(--ds-spacing-1, 0.25rem);
-    background: var(--ds-surface-container, rgba(169, 180, 185, 0.12));
-    padding: var(--ds-spacing-1, 0.25rem) var(--ds-spacing-2, 0.5rem);
-    font-size: var(--ds-font-size-sm, 0.75rem);
+    gap: 0.25rem;
+    background: var(--ds-accent, #e9ebef);
+    padding: 2px 0.5rem;
+    font-size: 0.75rem;
     font-family: var(--ds-font-family, inherit);
-    border-radius: 0px;
-    color: var(--ds-on-surface, inherit);
+    border-radius: 0.375rem;
+    color: var(--ds-accent-foreground, #030213);
+    font-weight: 500;
+    line-height: 1.4;
   }
 
   .ds-tag-input__tag-label {
@@ -163,16 +171,18 @@ const handleInput = (e: Event) => {
     justify-content: center;
     background: none;
     border: none;
-    padding: 0;
+    padding: 1px;
     cursor: pointer;
-    color: inherit;
-    opacity: 0.5;
+    color: var(--ds-muted-foreground, #717182);
+    opacity: 0.6;
     line-height: 1;
-    transition: opacity var(--ds-transition-normal, 250ms ease);
+    transition: opacity 150ms cubic-bezier(0.4,0,0.2,1);
+    margin-left: 1px;
   }
 
   .ds-tag-input__tag-remove:hover {
     opacity: 1;
+    color: var(--ds-destructive, #d4183d);
   }
 
   .ds-tag-input__input {
@@ -182,17 +192,18 @@ const handleInput = (e: Event) => {
     background: transparent;
     outline: none;
     font-family: var(--ds-font-family, inherit);
-    font-size: var(--ds-font-size-md, 0.875rem);
-    color: var(--ds-on-surface, inherit);
-    padding: 0;
+    font-size: 0.875rem;
+    color: var(--ds-foreground, #1a1a1a);
+    padding: 2px 0;
+    line-height: 1.5;
   }
 
   .ds-tag-input__input::placeholder {
-    color: var(--ds-on-surface-variant, rgba(100, 110, 115, 0.7));
+    color: var(--ds-muted-foreground, #717182);
+    opacity: 0.7;
   }
 
   .ds-tag-input__input:disabled {
     cursor: not-allowed;
   }
-}
 </style>

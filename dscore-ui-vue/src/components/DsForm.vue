@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, provide, reactive, computed, watch } from 'vue'
+import { ref, provide, reactive, computed, watch, onUnmounted } from 'vue'
 import { useDsConfig } from '../plugin'
 
 interface Props {
@@ -38,14 +38,14 @@ const isDirty = computed(() => {
 })
 
 // Warn before leave
-if (props.warnOnLeave && typeof window !== 'undefined') {
-  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-    if (isDirty.value) {
-      e.preventDefault()
-      e.returnValue = ''
-    }
+const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+  if (isDirty.value) {
+    e.preventDefault()
+    e.returnValue = ''
   }
+}
 
+if (typeof window !== 'undefined') {
   watch(() => props.warnOnLeave, (warn) => {
     if (warn) {
       window.addEventListener('beforeunload', handleBeforeUnload)
@@ -53,6 +53,10 @@ if (props.warnOnLeave && typeof window !== 'undefined') {
       window.removeEventListener('beforeunload', handleBeforeUnload)
     }
   }, { immediate: true })
+
+  onUnmounted(() => {
+    window.removeEventListener('beforeunload', handleBeforeUnload)
+  })
 }
 
 const registerField = (name: string, field: { validate: () => boolean; reset: () => void }) => {
@@ -124,13 +128,13 @@ defineExpose({
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-form {
     display: flex;
     flex-direction: column;
-    gap: var(--ds-spacing-4, 1rem);
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
-    color: var(--ds-on-surface, #2a3439);
+    gap: 1rem;
+    font-family: var(--ds-font-family, inherit);
+    font-size: var(--ds-font-size-sm, 0.875rem);
+    color: var(--ds-foreground, #1a1a1a);
   }
-}
 </style>

@@ -52,16 +52,15 @@ const isStyled = computed(() => props.applyDefaultStyle !== false && config.appl
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-timeline {
     display: flex;
     flex-direction: column;
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
   }
 
   .ds-timeline__item {
     display: flex;
-    gap: var(--ds-spacing-4, 1rem);
+    gap: 1rem;
     position: relative;
   }
 
@@ -76,23 +75,39 @@ const isStyled = computed(() => props.applyDefaultStyle !== false && config.appl
   .ds-timeline__dot {
     width: 10px;
     height: 10px;
-    background: var(--ds-surface-container-highest, #c8d3d7);
-    border-radius: 0px;
+    background: var(--ds-muted-foreground, #717182);
+    border-radius: 9999px;
     flex-shrink: 0;
     margin-top: 4px;
+  }
+
+  .ds-timeline__dot--success {
+    background: var(--ds-success, #16a34a);
+  }
+
+  .ds-timeline__dot--error {
+    background: var(--ds-error, #d93025);
+  }
+
+  .ds-timeline__dot--warning {
+    background: var(--ds-warning, #f59e0b);
+  }
+
+  .ds-timeline__dot--info {
+    background: var(--ds-info, #2563eb);
   }
 
   .ds-timeline__line {
     width: 1px;
     flex: 1;
-    min-height: var(--ds-spacing-4, 1rem);
-    background: var(--ds-outline-variant, #a9b4b9);
-    margin-top: var(--ds-spacing-1, 0.25rem);
-    margin-bottom: calc(-1 * var(--ds-spacing-4, 1rem));
+    min-height: 1rem;
+    background: var(--ds-border, rgba(0,0,0,0.1));
+    margin-top: 0.25rem;
+    margin-bottom: -1rem;
   }
 
   .ds-timeline__content {
-    padding-bottom: var(--ds-spacing-6, 1.5rem);
+    padding-bottom: 1.5rem;
     flex: 1;
     min-width: 0;
   }
@@ -102,26 +117,24 @@ const isStyled = computed(() => props.applyDefaultStyle !== false && config.appl
   }
 
   .ds-timeline__time {
-    font-size: var(--ds-font-size-xs, 0.75rem);
-    color: var(--ds-on-surface-variant, #8c9ea5);
+    font-size: 0.75rem;
+    color: var(--ds-muted-foreground, #717182);
     font-weight: 500;
-    letter-spacing: 0.01em;
     line-height: 1.4;
-    margin-bottom: var(--ds-spacing-1, 0.25rem);
+    margin-bottom: 0.25rem;
   }
 
   .ds-timeline__title {
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    font-size: 0.875rem;
     font-weight: 500;
-    color: var(--ds-on-surface, #1a1a1a);
+    color: var(--ds-foreground, #1a1a1a);
     line-height: 1.4;
   }
 
   .ds-timeline__description {
-    font-size: var(--ds-font-size-sm, 0.875rem);
-    color: var(--ds-on-surface-variant, #8c9ea5);
-    margin-top: var(--ds-spacing-1, 0.25rem);
+    font-size: 0.875rem;
+    color: var(--ds-muted-foreground, #717182);
+    margin-top: 0.25rem;
     line-height: 1.5;
   }
-}
 </style>

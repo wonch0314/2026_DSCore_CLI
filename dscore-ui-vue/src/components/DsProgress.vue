@@ -26,6 +26,7 @@ const config = useDsConfig()
 const isStyled = computed(() => props.applyDefaultStyle !== false && config.applyDefaultStyle !== false)
 
 const percentage = computed(() => {
+  if (!props.max) return 0
   const pct = (props.value / props.max) * 100
   return Math.min(100, Math.max(0, pct))
 })
@@ -56,36 +57,39 @@ const percentage = computed(() => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-progress {
     width: 100%;
-    background: var(--ds-surface-container, #e8eff3);
-    border-radius: 0px;
+    background: rgba(3, 2, 19, 0.2);
+    border-radius: 9999px;
     overflow: hidden;
+    position: relative;
+    height: 0.5rem;
   }
 
-  .ds-progress--sm { height: 4px; }
-  .ds-progress--md { height: 4px; }
-  .ds-progress--lg { height: 8px; }
+  .ds-progress--sm  { height: 0.25rem; }
+  .ds-progress--md  { height: 0.5rem; }
+  .ds-progress--lg  { height: 0.75rem; }
 
   .ds-progress-bar {
     height: 100%;
-    background: var(--ds-primary, #5f5e5e);
-    border-radius: 0px;
-    transition: width 0.3s ease;
+    background: var(--ds-primary, #030213);
+    border-radius: 9999px;
+    transition: all 150ms cubic-bezier(0.4,0,0.2,1);
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+    padding-right: 0.5rem;
   }
 
   .ds-progress--striped .ds-progress-bar {
     background-image: linear-gradient(
       45deg,
-      rgba(255, 255, 255, 0.15) 25%,
+      rgba(255, 255, 255, 0.12) 25%,
       transparent 25%,
       transparent 50%,
-      rgba(255, 255, 255, 0.15) 50%,
-      rgba(255, 255, 255, 0.15) 75%,
+      rgba(255, 255, 255, 0.12) 50%,
+      rgba(255, 255, 255, 0.12) 75%,
       transparent 75%,
       transparent
     );
@@ -98,13 +102,13 @@ const percentage = computed(() => {
 
   @keyframes ds-progress-stripes {
     from { background-position: 1rem 0; }
-    to { background-position: 0 0; }
+    to   { background-position: 0 0; }
   }
 
   .ds-progress-label {
-    font-size: var(--ds-font-size-xs, 0.625rem);
-    color: var(--ds-on-primary, #fff);
-    font-weight: 500;
+    font-size: 0.6875rem;
+    color: #fff;
+    font-weight: 600;
+    white-space: nowrap;
   }
-}
 </style>

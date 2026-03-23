@@ -39,6 +39,35 @@ const rightSearch = ref('')
 const leftChecked = ref<Set<string | number>>(new Set())
 const rightChecked = ref<Set<string | number>>(new Set())
 
+// --- 초성검색 유틸 ---
+const CHOSUNG_LIST = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ']
+
+function getChosung(str: string): string {
+  return [...str].map(ch => {
+    const code = ch.charCodeAt(0)
+    if (code >= 0xAC00 && code <= 0xD7A3) {
+      return CHOSUNG_LIST[Math.floor((code - 0xAC00) / 588)]
+    }
+    return ch
+  }).join('')
+}
+
+function isChosungOnly(str: string): boolean {
+  return [...str].every(ch => CHOSUNG_LIST.includes(ch))
+}
+
+function matchesSearch(label: string, query: string): boolean {
+  const q = query.toLowerCase()
+  // 일반 검색
+  if (label.toLowerCase().includes(q)) return true
+  // 초성 검색: 쿼리가 초성으로만 이루어진 경우
+  if (isChosungOnly(query)) {
+    const labelChosung = getChosung(label)
+    return labelChosung.includes(query)
+  }
+  return false
+}
+
 // Source = items NOT in modelValue
 const sourceItems = computed(() =>
   props.data.filter(item => !props.modelValue.includes(item.key))
@@ -52,13 +81,13 @@ const targetItems = computed(() =>
 )
 
 const filteredSource = computed(() => {
-  const q = leftSearch.value.toLowerCase()
-  return q ? sourceItems.value.filter(item => item.label.toLowerCase().includes(q)) : sourceItems.value
+  const q = leftSearch.value.trim()
+  return q ? sourceItems.value.filter(item => matchesSearch(item.label, q)) : sourceItems.value
 })
 
 const filteredTarget = computed(() => {
-  const q = rightSearch.value.toLowerCase()
-  return q ? targetItems.value.filter(item => item.label.toLowerCase().includes(q)) : targetItems.value
+  const q = rightSearch.value.trim()
+  return q ? targetItems.value.filter(item => matchesSearch(item.label, q)) : targetItems.value
 })
 
 // Left panel checkbox state
@@ -291,13 +320,13 @@ const canMoveLeft = computed(() => rightCheckedCount.value > 0)
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-transfer {
     display: flex;
     align-items: stretch;
-    gap: var(--ds-spacing-4, 1rem);
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
-    color: var(--ds-on-surface, #2a3439);
+    gap: 1rem;
+    font-family: var(--ds-font-family, inherit);
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-transfer--disabled {
@@ -305,65 +334,65 @@ const canMoveLeft = computed(() => rightCheckedCount.value > 0)
     pointer-events: none;
   }
 
-  /* Panel */
   .ds-transfer-panel {
     flex: 1;
     display: flex;
     flex-direction: column;
-    border: var(--ds-ghost-border, 1px solid rgba(169, 180, 185, 0.2));
-    background: var(--ds-surface-container-lowest, #fff);
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    border-radius: 0.375rem;
+    background: var(--ds-background, #fff);
     min-width: 0;
+    overflow: hidden;
   }
 
-  /* Panel header */
   .ds-transfer-panel-header {
     display: flex;
     align-items: center;
-    gap: var(--ds-spacing-2, 0.5rem);
-    padding: var(--ds-spacing-3, 0.75rem) var(--ds-spacing-4, 1rem);
-    background: var(--ds-surface-container-low, #f0f4f7);
-    border-bottom: var(--ds-ghost-border, 1px solid rgba(169, 180, 185, 0.2));
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--ds-muted, #ececf0);
+    border-bottom: 1px solid var(--ds-border, rgba(0,0,0,0.1));
     flex-shrink: 0;
   }
 
   .ds-transfer-panel-title {
     flex: 1;
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    font-size: 0.875rem;
     font-weight: 500;
-    color: var(--ds-on-surface, #2a3439);
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-transfer-panel-count {
-    font-size: var(--ds-font-size-sm, 0.875rem);
-    color: var(--ds-on-surface-variant, #6b7b82);
+    font-size: 0.875rem;
+    color: var(--ds-muted-foreground, #717182);
   }
 
-  /* Search */
   .ds-transfer-search-wrap {
-    padding: var(--ds-spacing-2, 0.5rem) var(--ds-spacing-3, 0.75rem);
-    border-bottom: var(--ds-ghost-border, 1px solid rgba(169, 180, 185, 0.2));
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--ds-border, rgba(0,0,0,0.1));
     flex-shrink: 0;
   }
 
   .ds-transfer-search {
     width: 100%;
     box-sizing: border-box;
-    padding: var(--ds-spacing-2, 0.5rem) 0;
-    border: none;
-    border-bottom: 1px solid var(--ds-outline, #8a979d);
+    padding: 0.375rem 0.5rem;
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    border-radius: 0.375rem;
     outline: none;
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
-    font-size: var(--ds-font-size-sm, 0.875rem);
-    color: var(--ds-on-surface, #2a3439);
-    background: transparent;
-    transition: border-bottom-color 0.15s;
+    font-family: var(--ds-font-family, inherit);
+    font-size: 0.875rem;
+    color: var(--ds-foreground, #1a1a1a);
+    background: var(--ds-background, #fff);
+    transition: border-color 150ms cubic-bezier(0.4,0,0.2,1),
+                box-shadow 150ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-transfer-search:focus {
-    border-bottom: 2px solid var(--ds-primary, #5f5e5e);
+    border-color: #a8a8a8;
+    box-shadow: 0 0 0 3px rgba(168,168,168,0.5);
   }
 
-  /* Panel body */
   .ds-transfer-panel-body {
     flex: 1;
     overflow-y: auto;
@@ -371,24 +400,23 @@ const canMoveLeft = computed(() => rightCheckedCount.value > 0)
     max-height: 320px;
   }
 
-  /* Item */
   .ds-transfer-item {
     display: flex;
     align-items: center;
-    gap: var(--ds-spacing-2, 0.5rem);
-    padding: var(--ds-spacing-2, 0.5rem) var(--ds-spacing-4, 1rem);
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    gap: 0.5rem;
+    padding: 0.375rem 1rem;
+    font-size: 0.875rem;
     cursor: pointer;
-    transition: background 0.1s;
+    transition: background 150ms cubic-bezier(0.4,0,0.2,1);
     user-select: none;
   }
 
   .ds-transfer-item:hover:not(.ds-transfer-item--disabled) {
-    background: var(--ds-surface-container-low, #f0f4f7);
+    background: var(--ds-accent, #e9ebef);
   }
 
   .ds-transfer-item--checked {
-    background: var(--ds-surface-container-high, #e4edf2);
+    background: color-mix(in srgb, var(--ds-accent, #e9ebef) 60%, transparent);
   }
 
   .ds-transfer-item--disabled {
@@ -403,30 +431,27 @@ const canMoveLeft = computed(() => rightCheckedCount.value > 0)
     text-overflow: ellipsis;
   }
 
-  /* Checkbox */
   .ds-transfer-checkbox {
     flex-shrink: 0;
     cursor: pointer;
-    accent-color: var(--ds-primary, #5f5e5e);
+    accent-color: var(--ds-primary, #030213);
     width: 14px;
     height: 14px;
   }
 
-  /* Empty state */
   .ds-transfer-empty {
-    padding: var(--ds-spacing-4, 1rem);
+    padding: 1rem;
     text-align: center;
-    color: var(--ds-on-surface-variant, #6b7b82);
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    color: var(--ds-muted-foreground, #717182);
+    font-size: 0.875rem;
   }
 
-  /* Transfer buttons column */
   .ds-transfer-buttons {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--ds-spacing-2, 0.5rem);
+    gap: 0.5rem;
     flex-shrink: 0;
   }
 
@@ -434,21 +459,21 @@ const canMoveLeft = computed(() => rightCheckedCount.value > 0)
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--ds-spacing-2, 0.5rem);
-    background: transparent;
-    border: var(--ds-ghost-border, 1px solid rgba(169, 180, 185, 0.2));
-    border-radius: 0px;
+    padding: 0.5rem;
+    background: var(--ds-background, #fff);
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    border-radius: 0.375rem;
     cursor: pointer;
-    color: var(--ds-on-surface, #2a3439);
-    transition: background 0.15s, opacity 0.15s;
+    color: var(--ds-foreground, #1a1a1a);
+    transition: background 150ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-transfer-btn:hover:not(:disabled) {
-    background: var(--ds-surface-container-low, #f0f4f7);
+    background: var(--ds-accent, #e9ebef);
   }
 
   .ds-transfer-btn:active:not(:disabled) {
-    background: var(--ds-surface-container-high, #e4edf2);
+    background: var(--ds-muted, #ececf0);
   }
 
   .ds-transfer-btn svg {
@@ -461,5 +486,4 @@ const canMoveLeft = computed(() => rightCheckedCount.value > 0)
     opacity: 0.35;
     cursor: not-allowed;
   }
-}
 </style>

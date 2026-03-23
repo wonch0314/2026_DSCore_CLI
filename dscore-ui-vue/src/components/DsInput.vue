@@ -100,11 +100,12 @@ onUnmounted(() => {
   }
 })
 
+const inputRef = ref<HTMLInputElement | null>(null)
+
 defineExpose({
   validate: () => validate(internalValue.value),
   focus: () => {
-    const input = document.querySelector('.ds-input') as HTMLInputElement
-    input?.focus()
+    inputRef.value?.focus()
   }
 })
 </script>
@@ -112,6 +113,7 @@ defineExpose({
 <template>
   <div :class="[isStyled && 'ds-input-wrapper', isStyled && hasError && 'ds-input-wrapper--error']">
     <input
+      ref="inputRef"
       :class="isStyled && 'ds-input'"
       :value="internalValue"
       v-bind="attrs"
@@ -123,49 +125,66 @@ defineExpose({
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-input-wrapper {
     display: flex;
     flex-direction: column;
+    position: relative;
   }
 
   .ds-input {
+    display: flex;
+    height: 2.25rem;
     width: 100%;
-    padding: var(--ds-spacing-2, 0.5rem) 0;
-    background: transparent;
-    border: none;
-    border-bottom: 1px solid var(--ds-outline, #8a979d);
-    border-radius: 0;
-    outline: none;
-    font-family: var(--ds-font-family, inherit);
-    font-size: var(--ds-font-size-md, 0.875rem);
-    color: var(--ds-on-surface, #2a3439);
-    transition: border-color var(--ds-transition-normal, 250ms ease);
+    min-width: 0;
+    border-radius: var(--ds-radius-md, 0.5rem);
+    border: 1px solid var(--ds-border, rgba(0, 0, 0, 0.1));
+    background-color: var(--ds-input-background, #f3f3f5);
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
     box-sizing: border-box;
-  }
-
-  .ds-input:focus {
-    border-bottom: 2px solid var(--ds-primary, #5f5e5e);
+    font-family: var(--ds-font-family, inherit);
+    color: var(--ds-foreground, #1a1a1a);
+    outline: none;
+    box-sizing: border-box;
+    transition:
+      color var(--ds-transition-fast, 150ms cubic-bezier(0.4, 0, 0.2, 1)),
+      box-shadow var(--ds-transition-fast, 150ms cubic-bezier(0.4, 0, 0.2, 1));
   }
 
   .ds-input::placeholder {
-    color: var(--ds-on-surface-variant, #8a979d);
-    opacity: 1;
+    color: var(--ds-muted-foreground, #717182);
   }
 
-  .ds-input-wrapper--error .ds-input {
-    border-bottom-color: var(--ds-error, #ef4444);
+  .ds-input:focus-visible {
+    border-color: var(--ds-ring, #a8a8a8);
+    box-shadow: 0 0 0 3px var(--ds-ring-color, rgba(168, 168, 168, 0.5));
   }
 
-  .ds-input-wrapper--error .ds-input:focus {
-    border-bottom-color: var(--ds-error, #ef4444);
+  .ds-input:disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  /* Error state */
+  .ds-input-wrapper--error .ds-input,
+  .ds-input--error,
+  .ds-input[aria-invalid="true"] {
+    border-color: var(--ds-destructive, #d4183d);
+    box-shadow: 0 0 0 3px var(--ds-ring-destructive, rgba(212, 24, 61, 0.2));
   }
 
   .ds-input-error {
-    font-size: 0.75rem;
-    color: var(--ds-error, #ef4444);
-    margin-top: 0.25em;
-    font-family: var(--ds-font-family, inherit);
+    font-size: var(--ds-font-size-sm, 0.875rem);
+    color: var(--ds-destructive, #d4183d);
+    margin-top: 0.25rem;
+    animation: ds-error-in 200ms ease both;
   }
-}
+
+  @keyframes ds-error-in {
+    from { opacity: 0; transform: translateY(-2px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 </style>

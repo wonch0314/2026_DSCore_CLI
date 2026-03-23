@@ -28,7 +28,9 @@ const emit = defineEmits<{
 const config = useDsConfig()
 const isStyled = computed(() => props.applyDefaultStyle !== false && config.applyDefaultStyle !== false)
 
-const totalPages = computed(() => Math.ceil(props.total / props.pageSize))
+const totalPages = computed(() =>
+  props.pageSize > 0 ? Math.ceil(props.total / props.pageSize) : 0
+)
 
 const pageButtons = computed<(number | '...')[]>(() => {
   const total = totalPages.value
@@ -116,51 +118,71 @@ const navigate = (page: number) => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-pagination {
     display: inline-flex;
     align-items: center;
-    gap: var(--ds-spacing-1, 0.25rem);
-    font-size: var(--ds-font-size-sm, 0.875rem);
-    color: var(--ds-on-surface, #2a3439);
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--ds-foreground, #1a1a1a);
+    font-family: var(--ds-font-family, inherit);
   }
 
   .ds-pagination__btn {
     cursor: pointer;
-    background: var(--ds-surface-container-lowest, #fff);
-    border: 1px solid rgba(169, 180, 185, 0.2);
-    border-radius: 0px;
-    padding: var(--ds-spacing-1, 0.25rem) var(--ds-spacing-3, 0.75rem);
-    font-size: var(--ds-font-size-sm, 0.875rem);
-    color: var(--ds-on-surface, #2a3439);
-    transition: background 0.15s;
-    min-width: 2rem;
-    text-align: center;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+    padding: 0;
+    font-size: 0.875rem;
+    font-family: var(--ds-font-family, inherit);
+    color: var(--ds-foreground, #1a1a1a);
+    transition: background 150ms cubic-bezier(0.4,0,0.2,1),
+                color 150ms cubic-bezier(0.4,0,0.2,1),
+                border-color 150ms cubic-bezier(0.4,0,0.2,1);
+    width: 2.25rem;
+    height: 2.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .ds-pagination__prev,
+  .ds-pagination__next {
+    font-size: 1.1rem;
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-pagination__btn:hover:not(:disabled) {
-    background: var(--ds-surface-container-low, #f0f4f7);
+    background: var(--ds-accent, #e9ebef);
+    color: var(--ds-accent-foreground, #030213);
   }
 
   .ds-pagination__btn--active {
-    background: var(--ds-primary, #5f5e5e);
-    color: var(--ds-on-primary, #fff);
-    border-color: var(--ds-primary, #5f5e5e);
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    background: transparent;
+    color: var(--ds-foreground, #1a1a1a);
+    font-weight: 500;
   }
 
   .ds-pagination__btn--active:hover:not(:disabled) {
-    background: var(--ds-primary, #5f5e5e);
+    background: var(--ds-accent, #e9ebef);
   }
 
   .ds-pagination__btn:disabled {
     cursor: not-allowed;
-    opacity: 0.4;
+    opacity: 0.35;
   }
 
   .ds-pagination__ellipsis {
-    padding: var(--ds-spacing-1, 0.25rem) var(--ds-spacing-2, 0.5rem);
-    color: var(--ds-on-surface-variant, #5a6970);
+    width: 2.25rem;
+    height: 2.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ds-muted-foreground, #717182);
     user-select: none;
+    font-size: 0.875rem;
   }
-}
 </style>

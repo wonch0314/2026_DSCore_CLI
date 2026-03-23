@@ -44,7 +44,7 @@ const trend = computed(() => {
         <slot name="value">{{ value }}</slot>
       </div>
       <div
-        v-if="change !== null"
+        v-if="change != null"
         :class="[isStyled && 'ds-stat-card__change', isStyled && `ds-stat-card__change--${trend}`]"
       >
         {{ change > 0 ? '+' : '' }}{{ change }}{{ changeUnit }}
@@ -57,72 +57,77 @@ const trend = computed(() => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-stat-card {
-    background: var(--ds-surface-container-lowest, #fff);
-    border: 1px solid rgba(169, 180, 185, 0.2);
-    box-shadow: 0 10px 40px 0 rgba(42, 52, 57, 0.04);
-    border-radius: 0px;
-    padding: var(--ds-spacing-4, 1rem);
+    background: var(--ds-card, #fff);
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: var(--ds-spacing-2, 0.5rem);
+    gap: 0.75rem;
+    color: var(--ds-card-foreground, #1a1a1a);
   }
 
   .ds-stat-card--loading {
-    opacity: 0.6;
+    opacity: 0.55;
     pointer-events: none;
   }
 
   .ds-stat-card__icon {
-    color: var(--ds-on-surface-variant, #5a6970);
-    opacity: 0.7;
+    color: var(--ds-muted-foreground, #717182);
+    opacity: 0.65;
+    line-height: 1;
   }
 
   .ds-stat-card__content {
     display: flex;
     flex-direction: column;
-    gap: var(--ds-spacing-1, 0.25rem);
+    gap: 0.25rem;
   }
 
   .ds-stat-card__title {
-    font-size: var(--ds-font-size-xs, 0.75rem);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: var(--ds-letter-spacing-wide, 0.06em);
-    color: var(--ds-on-surface-variant, #5a6970);
-  }
-
-  .ds-stat-card__value {
-    font-size: var(--ds-font-size-xl, 1.5rem);
-    font-weight: 600;
-    color: var(--ds-on-surface, #2a3439);
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--ds-muted-foreground, #717182);
     line-height: 1.2;
   }
 
+  .ds-stat-card__value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--ds-foreground, #1a1a1a);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
   .ds-stat-card__change {
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.75rem;
     font-weight: 500;
+    margin-top: 0.25rem;
   }
 
   .ds-stat-card__change--up {
-    color: var(--ds-success, #3d7a4a);
+    color: #3d7a4a;
   }
 
   .ds-stat-card__change--down {
-    color: var(--ds-error, #9f403d);
+    color: var(--ds-destructive, #d4183d);
   }
 
   .ds-stat-card__change--neutral {
-    color: var(--ds-on-surface-variant, #5a6970);
+    color: var(--ds-muted-foreground, #717182);
   }
 
   .ds-stat-card__footer {
-    margin-top: var(--ds-spacing-2, 0.5rem);
-    padding-top: var(--ds-spacing-2, 0.5rem);
-    border-top: 1px solid rgba(169, 180, 185, 0.2);
-    font-size: var(--ds-font-size-sm, 0.875rem);
-    color: var(--ds-on-surface-variant, #5a6970);
+    margin-top: 0.25rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    font-size: 0.75rem;
+    color: var(--ds-muted-foreground, #717182);
+    line-height: 1.5;
   }
-}
 </style>

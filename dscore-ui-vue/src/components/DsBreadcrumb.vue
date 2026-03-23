@@ -15,6 +15,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  items: () => [],
   separator: '/',
   applyDefaultStyle: undefined
 })
@@ -71,11 +72,11 @@ function hasRouterLink(item: BreadcrumbItem) {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-breadcrumb__list {
     display: flex;
     align-items: center;
-    gap: var(--ds-spacing-2, 0.5rem);
+    gap: 0.375rem;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -89,14 +90,14 @@ function hasRouterLink(item: BreadcrumbItem) {
 
   .ds-breadcrumb__link {
     font-family: var(--ds-font-family);
-    font-size: var(--ds-font-size-sm, 0.75rem);
-    color: var(--ds-on-surface-variant, #6b7b82);
+    font-size: 0.875rem;
+    color: var(--ds-muted-foreground, #717182);
     text-decoration: none;
-    transition: color var(--ds-transition-fast, 150ms ease);
+    transition: color 150ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-breadcrumb__link:hover {
-    color: var(--ds-on-surface, #2a3439);
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-breadcrumb__link--plain {
@@ -105,17 +106,17 @@ function hasRouterLink(item: BreadcrumbItem) {
 
   .ds-breadcrumb__current {
     font-family: var(--ds-font-family);
-    font-size: var(--ds-font-size-sm, 0.75rem);
-    color: var(--ds-on-surface, #2a3439);
+    font-size: 0.875rem;
+    color: var(--ds-foreground, #1a1a1a);
     font-weight: 500;
   }
 
   .ds-breadcrumb__separator {
     display: inline-flex;
     align-items: center;
-    color: var(--ds-on-surface-variant, #6b7b82);
-    font-size: var(--ds-font-size-sm, 0.75rem);
+    color: var(--ds-muted-foreground, #717182);
+    font-size: 0.875rem;
     user-select: none;
+    margin: 0 0.25rem;
   }
-}
 </style>

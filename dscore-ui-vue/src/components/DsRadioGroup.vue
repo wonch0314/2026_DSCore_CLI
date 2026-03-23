@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, provide } from 'vue'
+import { provide } from 'vue'
 import DsRadio from './DsRadio.vue'
 import { useDsConfig } from '../plugin'
 
@@ -39,7 +39,7 @@ const updateValue = (value: string | number | boolean) => {
 }
 
 provide('ds-radio-group', {
-  modelValue: computed(() => props.modelValue),
+  get modelValue() { return props.modelValue },
   updateValue
 })
 </script>
@@ -63,19 +63,18 @@ provide('ds-radio-group', {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-radio-group {
-    display: flex;
+    display: grid;
+    gap: 0.75rem;
   }
 
   .ds-radio-group--vertical {
-    flex-direction: column;
-    gap: 0.5rem;
+    grid-auto-flow: row;
   }
 
   .ds-radio-group--horizontal {
-    flex-direction: row;
-    gap: 1rem;
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
   }
-}
 </style>

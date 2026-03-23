@@ -213,35 +213,36 @@ const isEmpty = computed(() => !props.loading && props.data.length === 0)
         </template>
 
         <template v-else>
-          <tr
-            v-for="(row, rowIndex) in data"
-            :key="row[rowKey]"
-            :class="[isStyled && 'ds-table__row', isStyled && selectedIds.has(row[rowKey]) && 'ds-table__row--selected']"
-            @click="handleRowClick(row, rowIndex)"
-          >
-            <td v-if="selectable" :class="[isStyled && 'ds-table__cell', isStyled && 'ds-table__cell--checkbox']">
-              <input
-                type="checkbox"
-                :checked="selectedIds.has(row[rowKey])"
-                @change.stop="toggleOne(row[rowKey])"
-                @click.stop
-              />
-            </td>
-            <td
-              v-for="column in columns"
-              :key="column.key"
-              :class="isStyled && 'ds-table__cell'"
+          <template v-for="(row, rowIndex) in data" :key="row?.[rowKey] ?? rowIndex">
+            <tr
+              v-if="row"
+              :class="[isStyled && 'ds-table__row', isStyled && selectedIds.has(row[rowKey]) && 'ds-table__row--selected']"
+              @click="handleRowClick(row, rowIndex)"
             >
-              <slot
-                :name="`cell-${column.key}`"
-                :row="row"
-                :column="column"
-                :row-index="rowIndex"
+              <td v-if="selectable" :class="[isStyled && 'ds-table__cell', isStyled && 'ds-table__cell--checkbox']">
+                <input
+                  type="checkbox"
+                  :checked="selectedIds.has(row[rowKey])"
+                  @change.stop="toggleOne(row[rowKey])"
+                  @click.stop
+                />
+              </td>
+              <td
+                v-for="column in columns"
+                :key="column.key"
+                :class="isStyled && 'ds-table__cell'"
               >
-                {{ row[column.key] }}
-              </slot>
-            </td>
-          </tr>
+                <slot
+                  :name="`cell-${column.key}`"
+                  :row="row"
+                  :column="column"
+                  :row-index="rowIndex"
+                >
+                  {{ row[column.key] }}
+                </slot>
+              </td>
+            </tr>
+          </template>
         </template>
       </tbody>
     </table>
@@ -249,16 +250,17 @@ const isEmpty = computed(() => !props.loading && props.data.length === 0)
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-table {
     position: relative;
     width: 100%;
     overflow-x: auto;
-    color: var(--ds-on-surface, #2a3439);
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-table--loading {
     pointer-events: none;
+    opacity: 0.7;
   }
 
   .ds-table__table {
@@ -271,24 +273,28 @@ const isEmpty = computed(() => !props.loading && props.data.length === 0)
     position: sticky;
     top: 0;
     z-index: 1;
-    background: var(--ds-surface-container-low, #f0f4f7);
   }
 
   .ds-table__header {
+    height: 2.5rem;
+    padding: 0 0.5rem;
     text-align: left;
     white-space: nowrap;
     user-select: none;
-    padding: var(--ds-spacing-3, 0.75rem) var(--ds-spacing-4, 1rem);
-    font-size: var(--ds-font-size-xs, 0.75rem);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: var(--ds-letter-spacing-wide, 0.06em);
-    color: var(--ds-on-surface-variant, #5a6970);
-    border-bottom: 1px solid rgba(169, 180, 185, 0.2);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ds-foreground, #1a1a1a);
+    vertical-align: middle;
+    border-bottom: 1px solid var(--ds-border, rgba(0,0,0,0.1));
   }
 
   .ds-table__header--sortable {
     cursor: pointer;
+    transition: color 150ms cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .ds-table__header--sortable:hover {
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-table__header-label {
@@ -298,46 +304,56 @@ const isEmpty = computed(() => !props.loading && props.data.length === 0)
   .ds-table__sort-icon {
     display: inline-flex;
     align-items: center;
-    margin-left: 0.25em;
-    font-size: 0.75em;
-    opacity: 0.5;
+    margin-left: 0.3em;
+    font-size: 0.7em;
+    opacity: 0.35;
+    transition: opacity 150ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-table__sort--asc .ds-table__sort-icon,
   .ds-table__sort--desc .ds-table__sort-icon {
     opacity: 1;
+    color: var(--ds-primary, #030213);
   }
 
   .ds-table__body .ds-table__row {
-    background: var(--ds-surface-container-lowest, #fff);
+    background: var(--ds-background, #fff);
     cursor: default;
-    border-bottom: 1px solid rgba(169, 180, 185, 0.2);
+    border-bottom: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    transition: background 150ms cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .ds-table__body .ds-table__row:last-child {
+    border-bottom: none;
   }
 
   .ds-table__body .ds-table__row:hover {
-    background: var(--ds-surface-container-low, #f0f4f7);
-  }
-
-  .ds-table__cell {
-    padding: var(--ds-spacing-3, 0.75rem) var(--ds-spacing-4, 1rem);
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    background: color-mix(in srgb, var(--ds-muted, #ececf0) 50%, transparent);
   }
 
   .ds-table__row--selected {
-    /* intentionally unstyled; consumer applies color */
+    background: var(--ds-accent, #e9ebef) !important;
+  }
+
+  .ds-table__cell {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    vertical-align: middle;
   }
 
   .ds-table__cell--empty,
   .ds-table__cell--loading {
     text-align: center;
-    color: var(--ds-on-surface-variant, #5a6970);
-    padding: var(--ds-spacing-4, 1rem);
+    color: var(--ds-muted-foreground, #717182);
+    padding: 2rem 0.5rem;
+    font-size: 0.875rem;
   }
 
   .ds-table__header--checkbox,
   .ds-table__cell--checkbox {
-    width: 1px;
+    width: 44px;
     white-space: nowrap;
+    text-align: center;
   }
-}
 </style>

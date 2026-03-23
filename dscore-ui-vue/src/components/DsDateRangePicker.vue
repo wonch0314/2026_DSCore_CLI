@@ -248,13 +248,15 @@ function applyPreset(preset: Preset) {
 function open() {
   if (props.disabled) return
   // Sync left panel to start date or current month
-  if (props.modelValue.start) {
+  if (props.modelValue?.start) {
     const parts = props.modelValue.start.split('-')
-    leftYear.value = parseInt(parts[0])
-    leftMonth.value = parseInt(parts[1]) - 1
-    // Ensure right panel is next month
-    if (leftMonth.value === 11) {
-      leftMonth.value = 10 // show Nov + Dec when start is Dec
+    if (parts.length >= 2 && !isNaN(parseInt(parts[0])) && !isNaN(parseInt(parts[1]))) {
+      leftYear.value = parseInt(parts[0])
+      leftMonth.value = parseInt(parts[1]) - 1
+      // Ensure right panel is next month
+      if (leftMonth.value === 11) {
+        leftMonth.value = 10 // show Nov + Dec when start is Dec
+      }
     }
   }
   selectingPhase.value = 'start'
@@ -420,13 +422,13 @@ onUnmounted(() => {
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-daterange {
     position: relative;
     display: inline-block;
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
-    font-size: var(--ds-font-size-md, 0.9375rem);
-    color: var(--ds-on-surface, #2a3439);
+    font-family: var(--ds-font-family, inherit);
+    font-size: 0.875rem;
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-daterange--disabled {
@@ -444,14 +446,14 @@ onUnmounted(() => {
   .ds-daterange-input {
     display: flex;
     align-items: center;
-    padding: var(--ds-spacing-2, 0.5rem) 0;
-    border-bottom: 1px solid var(--ds-outline, #8a979d);
-    transition: border-bottom-color 0.15s;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    transition: border-bottom-color 150ms cubic-bezier(0.4,0,0.2,1);
     min-width: 100px;
   }
 
   .ds-daterange-input--active {
-    border-bottom: 2px solid var(--ds-primary, #5f5e5e);
+    border-bottom: 2px solid var(--ds-primary, #030213);
   }
 
   .ds-daterange-trigger:focus {
@@ -463,20 +465,20 @@ onUnmounted(() => {
   }
 
   .ds-daterange-placeholder {
-    color: var(--ds-on-surface-variant, #6b7b82);
-    opacity: 0.6;
+    color: var(--ds-muted-foreground, #717182);
+    opacity: 0.7;
     white-space: nowrap;
   }
 
   .ds-daterange-sep {
-    color: var(--ds-on-surface-variant, #6b7b82);
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    color: var(--ds-muted-foreground, #717182);
+    font-size: 0.875rem;
   }
 
   .ds-daterange-icon {
     display: flex;
     align-items: center;
-    color: var(--ds-on-surface-variant, #6b7b82);
+    color: var(--ds-muted-foreground, #717182);
     margin-left: 0.25rem;
   }
 
@@ -485,25 +487,23 @@ onUnmounted(() => {
     height: 16px;
   }
 
-  /* Panel */
   .ds-daterange-panel {
     position: absolute;
     top: calc(100% + 4px);
     left: 0;
     z-index: 200;
     display: flex;
-    background: var(--ds-surface-container-lowest, #fff);
-    border: 1px solid rgba(169, 180, 185, 0.2);
-    border-radius: 0px;
-    box-shadow: var(--ds-shadow-ambient, 0 2px 8px rgba(42, 52, 57, 0.08));
+    background: var(--ds-popover, #fff);
+    border: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+    border-radius: 0.375rem;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
   }
 
-  /* Presets sidebar */
   .ds-daterange-presets {
     display: flex;
     flex-direction: column;
     padding: 0.75rem 0;
-    border-right: 1px solid rgba(169, 180, 185, 0.2);
+    border-right: 1px solid var(--ds-border, rgba(0,0,0,0.1));
     min-width: 90px;
   }
 
@@ -511,21 +511,21 @@ onUnmounted(() => {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0.4rem 0.75rem;
-    font-size: var(--ds-font-size-xs, 0.75rem);
-    color: var(--ds-on-surface, #2a3439);
+    padding: 0.375rem 0.75rem;
+    font-size: 0.75rem;
+    color: var(--ds-foreground, #1a1a1a);
     text-align: left;
     white-space: nowrap;
-    font-family: var(--ds-font-family, 'Inter', sans-serif);
-    transition: background 0.1s;
+    font-family: var(--ds-font-family, inherit);
+    transition: background 150ms cubic-bezier(0.4,0,0.2,1);
+    border-radius: 0.125rem;
   }
 
   .ds-daterange-preset-btn:hover {
-    background: var(--ds-surface-container-low, #f0f4f7);
-    color: var(--ds-primary, #5f5e5e);
+    background: var(--ds-accent, #e9ebef);
+    color: var(--ds-accent-foreground, #030213);
   }
 
-  /* Calendars container */
   .ds-daterange-calendars {
     display: flex;
     gap: 0;
@@ -536,7 +536,7 @@ onUnmounted(() => {
   }
 
   .ds-daterange-calendar + .ds-daterange-calendar {
-    border-left: 1px solid rgba(169, 180, 185, 0.1);
+    border-left: 1px solid var(--ds-border, rgba(0,0,0,0.1));
   }
 
   .ds-daterange-cal-header {
@@ -547,9 +547,9 @@ onUnmounted(() => {
   }
 
   .ds-daterange-month-label {
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    font-size: 0.875rem;
     font-weight: 500;
-    color: var(--ds-on-surface, #2a3439);
+    color: var(--ds-foreground, #1a1a1a);
   }
 
   .ds-daterange-nav {
@@ -560,13 +560,16 @@ onUnmounted(() => {
     border: none;
     cursor: pointer;
     padding: 0.25rem;
-    color: var(--ds-on-surface-variant, #6b7b82);
-    border-radius: 0px;
-    transition: background 0.1s;
+    color: var(--ds-foreground, #1a1a1a);
+    border-radius: 0.375rem;
+    opacity: 0.5;
+    width: 1.75rem;
+    height: 1.75rem;
+    transition: opacity 150ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-daterange-nav:hover:not(:disabled) {
-    background: var(--ds-surface-container-low, #f0f4f7);
+    opacity: 1;
   }
 
   .ds-daterange-nav--hidden {
@@ -589,9 +592,9 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--ds-font-size-xs, 0.75rem);
+    font-size: 0.75rem;
     font-weight: 500;
-    color: var(--ds-on-surface-variant, #6b7b82);
+    color: var(--ds-muted-foreground, #717182);
     padding: 0.25rem 0;
   }
 
@@ -599,44 +602,45 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    aspect-ratio: 1;
-    font-size: var(--ds-font-size-sm, 0.875rem);
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.875rem;
     cursor: pointer;
-    border-radius: 0px;
-    transition: background 0.1s;
+    border-radius: 0.375rem;
+    transition: background 150ms cubic-bezier(0.4,0,0.2,1);
     user-select: none;
-    min-width: 32px;
-    min-height: 32px;
     position: relative;
   }
 
   .ds-daterange-day:hover:not(.ds-daterange-day--start):not(.ds-daterange-day--end) {
-    background: var(--ds-surface-container-low, #f0f4f7);
+    background: var(--ds-accent, #e9ebef);
   }
 
   .ds-daterange-day--other-month {
-    color: var(--ds-on-surface-variant, #6b7b82);
+    color: var(--ds-muted-foreground, #717182);
     opacity: 0.35;
   }
 
   .ds-daterange-day--in-range {
-    background: var(--ds-surface-container-low, #f0f4f7);
+    background: color-mix(in srgb, var(--ds-accent, #e9ebef) 50%, transparent);
+    border-radius: 0;
   }
 
   .ds-daterange-day--start,
   .ds-daterange-day--end {
-    background: var(--ds-primary, #5f5e5e);
-    color: var(--ds-on-primary, #faf7f6);
+    background: var(--ds-primary, #030213);
+    color: var(--ds-primary-foreground, #fff);
+    border-radius: 0.375rem;
   }
 
   .ds-daterange-day--today:not(.ds-daterange-day--start):not(.ds-daterange-day--end) {
-    box-shadow: inset 0 0 0 1px var(--ds-primary, #5f5e5e);
+    background: var(--ds-accent, #e9ebef);
+    font-weight: 600;
   }
 
-  /* Transitions */
   .ds-daterange-dropdown-enter-active,
   .ds-daterange-dropdown-leave-active {
-    transition: opacity 0.15s, transform 0.15s;
+    transition: opacity 150ms cubic-bezier(0.4,0,0.2,1), transform 150ms cubic-bezier(0.4,0,0.2,1);
   }
 
   .ds-daterange-dropdown-enter-from,
@@ -644,5 +648,4 @@ onUnmounted(() => {
     opacity: 0;
     transform: translateY(-4px);
   }
-}
 </style>

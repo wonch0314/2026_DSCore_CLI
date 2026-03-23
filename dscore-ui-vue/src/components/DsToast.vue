@@ -107,7 +107,7 @@ defineExpose({
               v-if="toast.action"
               type="button"
               :class="isStyled && 'ds-toast-action'"
-              @click="toast.action.onClick(); removeToast(toast.id)"
+              @click="toast.action?.onClick?.(); removeToast(toast.id)"
             >
               {{ toast.action.label }}
             </button>
@@ -115,7 +115,7 @@ defineExpose({
               v-if="toast.cancel"
               type="button"
               :class="isStyled && 'ds-toast-cancel'"
-              @click="toast.cancel.onClick(); removeToast(toast.id)"
+              @click="toast.cancel?.onClick?.(); removeToast(toast.id)"
             >
               {{ toast.cancel.label }}
             </button>
@@ -138,7 +138,7 @@ defineExpose({
 </template>
 
 <style>
-@layer ds-base {
+
   .ds-toast-container {
     position: fixed;
     z-index: 9999;
@@ -250,5 +250,4 @@ defineExpose({
     opacity: 0;
     transform: translateX(100%);
   }
-}
 </style>
