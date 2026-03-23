@@ -10,9 +10,9 @@
 
 html {
   font-family: var(--ds-font-family, 'Inter', sans-serif);
-  color: var(--ds-on-surface, #2a3439);
-  background: var(--ds-surface, #f7f9fb);
-  line-height: var(--ds-line-height-normal, 1.5);
+  color: var(--ds-foreground, #1a1a1a);
+  background: var(--ds-background, #ffffff);
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -27,49 +27,46 @@ a {
 
 /* Demo page utilities */
 .demo-section {
-  margin-bottom: var(--ds-spacing-16, 5.5rem);
+  margin-bottom: 3rem;
 }
 
 .demo-section__title {
-  font-size: var(--ds-font-size-xl, 1.5rem);
+  font-size: var(--ds-font-size-xl, 1.25rem);
   font-weight: 600;
-  letter-spacing: var(--ds-letter-spacing-tight, -0.02em);
-  margin-bottom: var(--ds-spacing-2, 0.5rem);
-  color: var(--ds-on-surface, #2a3439);
+  margin-bottom: 0.5rem;
+  color: var(--ds-foreground, #1a1a1a);
 }
 
 .demo-section__subtitle {
-  font-size: var(--ds-font-size-sm, 0.75rem);
-  color: var(--ds-on-surface-variant, #6b7b82);
-  margin-bottom: var(--ds-spacing-6, 1.5rem);
+  font-size: var(--ds-font-size-sm, 0.875rem);
+  color: var(--ds-muted-foreground, #717182);
+  margin-bottom: 1.5rem;
 }
 
 .demo-row {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--ds-spacing-4, 1rem);
+  gap: 1rem;
   align-items: center;
-  margin-bottom: var(--ds-spacing-4, 1rem);
+  margin-bottom: 1rem;
 }
 
 .demo-column {
   display: flex;
   flex-direction: column;
-  gap: var(--ds-spacing-4, 1rem);
+  gap: 1rem;
   max-width: 400px;
-  margin-bottom: var(--ds-spacing-4, 1rem);
+  margin-bottom: 1rem;
 }
 
 .demo-value {
-  font-size: var(--ds-font-size-xs, 0.6875rem);
-  color: var(--ds-on-surface-variant, #6b7b82);
-  text-transform: uppercase;
-  letter-spacing: var(--ds-letter-spacing-wide, 0.05em);
-  margin-top: var(--ds-spacing-2, 0.5rem);
+  font-size: var(--ds-font-size-xs, 0.75rem);
+  color: var(--ds-muted-foreground, #717182);
+  margin-top: 0.5rem;
 }
 
 .demo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--ds-spacing-6, 1.5rem);
+  gap: 1.5rem;
 }
