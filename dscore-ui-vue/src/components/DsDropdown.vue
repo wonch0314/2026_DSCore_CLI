@@ -132,8 +132,13 @@ defineExpose({ open, close, toggle })
   }
 
   .ds-dropdown__item:hover {
-    background: var(--ds-accent, #e9ebef);
+    background: color-mix(in srgb, var(--ds-accent, #e9ebef) 60%, transparent);
     color: var(--ds-accent-foreground, #030213);
+  }
+
+  .ds-dropdown__item--active:hover,
+  .ds-dropdown__item[aria-selected="true"]:hover {
+    background: var(--ds-accent, #e9ebef);
   }
 
   .ds-dropdown__item--active,

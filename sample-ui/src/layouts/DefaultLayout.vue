@@ -13,6 +13,7 @@ const navItems = [
   { label: 'Overlay', path: '/overlay' },
   { label: 'Advanced Input', path: '/advanced-input' },
   { label: 'BO 데모', path: '/bo-demo' },
+  { label: '콘텐츠 관리', path: '/content-management' },
 ]
 
 const pageTitle = computed(() => {

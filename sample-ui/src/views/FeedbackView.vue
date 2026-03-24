@@ -6,6 +6,7 @@ import {
   DsAlert,
   DsProgress,
   DsSkeleton,
+  DsErrorFallback,
 } from 'dscore-ui-vue'
 
 // --- DsToast ---
@@ -65,6 +66,12 @@ const progressAnimated = ref(false)
 // --- DsSkeleton ---
 const skeletonAnimate = ref<'pulse' | 'wave' | 'none'>('pulse')
 const skeletonAnimOptions = ['pulse', 'wave', 'none'] as const
+
+// --- DsErrorFallback ---
+const errorRetryCount = ref(0)
+const handleRetry = () => {
+  errorRetryCount.value++
+}
 </script>
 
 <template>
@@ -271,5 +278,92 @@ const skeletonAnimOptions = ['pulse', 'wave', 'none'] as const
         </div>
       </div>
     </div>
+
+    <!-- DsSkeleton Presets -->
+    <div class="demo-section">
+      <h2 class="demo-section__title">DsSkeleton — 레이아웃 프리셋</h2>
+      <p class="demo-section__subtitle">Table, Card, Form, List 형태의 스켈레톤 프리셋입니다.</p>
+
+      <div class="demo-grid" style="grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+        <!-- Table preset -->
+        <div class="demo-column" style="gap: 0.5rem;">
+          <p style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ds-on-surface-variant); margin-bottom:0.25rem;">Table</p>
+          <div style="border: 1px solid rgba(0,0,0,0.08); border-radius: 0.5rem; padding: 1rem;">
+            <DsSkeleton preset="table" :rows="4" :animation="skeletonAnimate" />
+          </div>
+        </div>
+
+        <!-- Card preset -->
+        <div class="demo-column" style="gap: 0.5rem;">
+          <p style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ds-on-surface-variant); margin-bottom:0.25rem;">Card</p>
+          <div style="border: 1px solid rgba(0,0,0,0.08); border-radius: 0.5rem; overflow: hidden;">
+            <DsSkeleton preset="card" :animation="skeletonAnimate" />
+          </div>
+        </div>
+
+        <!-- Form preset -->
+        <div class="demo-column" style="gap: 0.5rem;">
+          <p style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ds-on-surface-variant); margin-bottom:0.25rem;">Form</p>
+          <div style="border: 1px solid rgba(0,0,0,0.08); border-radius: 0.5rem; padding: 1rem;">
+            <DsSkeleton preset="form" :rows="3" :animation="skeletonAnimate" />
+          </div>
+        </div>
+
+        <!-- List preset -->
+        <div class="demo-column" style="gap: 0.5rem;">
+          <p style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--ds-on-surface-variant); margin-bottom:0.25rem;">List</p>
+          <div style="border: 1px solid rgba(0,0,0,0.08); border-radius: 0.5rem; padding: 1rem;">
+            <DsSkeleton preset="list" :rows="4" :animation="skeletonAnimate" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DsErrorFallback -->
+    <div class="demo-section">
+      <h2 class="demo-section__title">DsErrorFallback</h2>
+      <p class="demo-section__subtitle">API 에러 발생 시 표시하는 공통 에러 UI입니다. 상태 코드별로 기본 메시지를 제공합니다.</p>
+
+      <div class="demo-grid" style="grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+        <div style="border: 1px solid rgba(0,0,0,0.08); border-radius: 0.5rem;">
+          <DsErrorFallback :status="404" @retry="handleRetry" />
+        </div>
+        <div style="border: 1px solid rgba(0,0,0,0.08); border-radius: 0.5rem;">
+          <DsErrorFallback :status="403" :show-retry="false" />
+        </div>
+        <div style="border: 1px solid rgba(0,0,0,0.08); border-radius: 0.5rem;">
+          <DsErrorFallback :status="500" @retry="handleRetry" />
+        </div>
+        <div style="border: 1px solid rgba(0,0,0,0.08); border-radius: 0.5rem;">
+          <DsErrorFallback
+            title="커스텀 에러"
+            description="사용자 정의 에러 메시지를 표시할 수 있습니다."
+            retry-text="새로고침"
+            @retry="handleRetry"
+          />
+        </div>
+      </div>
+      <p v-if="errorRetryCount > 0" class="demo-value" style="margin-top: 0.75rem;">
+        재시도 횟수: {{ errorRetryCount }}
+      </p>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.demo-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.demo-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.demo-value {
+  font-size: 0.875rem;
+  color: var(--ds-on-surface, #2a3439);
+}
+</style>

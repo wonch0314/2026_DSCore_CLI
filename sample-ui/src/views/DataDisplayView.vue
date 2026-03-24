@@ -10,7 +10,6 @@ import {
   DsDescription,
   DsStatCard,
   DsButton,
-  DsSpinner,
 } from 'dscore-ui-vue'
 
 // --- Table ---
@@ -37,12 +36,12 @@ onMounted(() => {
 })
 
 const tableColumns = [
-  { key: 'id', label: 'ID', width: '60px', sortable: true },
-  { key: 'name', label: '이름', sortable: true },
+  { key: 'id', label: 'ID', width: '60px', sortable: true, fixed: 'left' as const },
+  { key: 'name', label: '이름', sortable: true, fixed: 'left' as const },
   { key: 'email', label: '이메일', sortable: true },
   { key: 'status', label: '상태' },
   { key: 'date', label: '가입일', sortable: true },
-  { key: 'actions', label: '액션', width: '120px' },
+  { key: 'actions', label: '액션', width: '120px', fixed: 'right' as const },
 ]
 
 const selectedRows = ref<number[]>([])
@@ -125,7 +124,7 @@ const descItems3col = [
     <!-- DsTable -->
     <section class="demo-section">
       <h2 class="demo-section__title">DsTable</h2>
-      <p class="demo-section__subtitle">선택 가능하고 정렬 가능한 데이터 테이블입니다. 페이지 진입 후 5초간 로딩 상태를 시뮬레이션합니다.</p>
+      <p class="demo-section__subtitle">선택 가능하고 정렬 가능한 데이터 테이블입니다. ID/이름 컬럼은 좌측 고정, 액션 컬럼은 우측 고정됩니다. 페이지 진입 후 5초간 로딩 상태를 시뮬레이션합니다.</p>
       <DsTable
         :data="sortedTableData"
         :columns="tableColumns"
@@ -136,12 +135,6 @@ const descItems3col = [
         v-model:sort-key="sortKey"
         v-model:sort-order="sortOrder"
       >
-        <template #loading>
-          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 2rem 0;">
-            <DsSpinner size="2rem" />
-            <span style="font-size: 0.875rem; color: #5a6970;">데이터를 불러오는 중...</span>
-          </div>
-        </template>
         <template #cell-status="{ row }">
           <DsStatusTag v-if="row" :status="row.status">
             {{ statusLabelMap[row.status] ?? row.status }}
@@ -166,7 +159,7 @@ const descItems3col = [
       <div v-show="showTableCode" class="demo-code">
         <pre v-pre><code>&lt;script setup lang="ts"&gt;
 import { ref, computed, onMounted } from 'vue'
-import { DsTable, DsSpinner, DsStatusTag, DsButton } from 'dscore-ui-vue'
+import { DsTable, DsStatusTag, DsButton } from 'dscore-ui-vue'
 
 const tableData = ref([])
 const tableLoading = ref(true)
@@ -182,8 +175,8 @@ onMounted(() =&gt; {
 })
 
 const columns = [
-  { key: 'id', label: 'ID', width: '60px', sortable: true },
-  { key: 'name', label: '이름', sortable: true },
+  { key: 'id', label: 'ID', width: '60px', sortable: true, fixed: 'left' },
+  { key: 'name', label: '이름', sortable: true, fixed: 'left' },
   { key: 'email', label: '이메일', sortable: true },
   { key: 'status', label: '상태' },
   { key: 'date', label: '가입일', sortable: true },
@@ -212,12 +205,6 @@ const sortedData = computed(() =&gt; {
     v-model:sort-key="sortKey"
     v-model:sort-order="sortOrder"
   &gt;
-    &lt;template #loading&gt;
-      &lt;div style="text-align: center; padding: 2rem;"&gt;
-        &lt;DsSpinner size="2rem" /&gt;
-        &lt;p&gt;데이터를 불러오는 중...&lt;/p&gt;
-      &lt;/div&gt;
-    &lt;/template&gt;
     &lt;template #cell-status="{ row }"&gt;
       &lt;DsStatusTag :status="row.status"&gt;{{ row.status }}&lt;/DsStatusTag&gt;
     &lt;/template&gt;

@@ -152,10 +152,10 @@ const handleFileError = (payload: { file: File; reason: string }) => {
     <!-- DsFileUpload -->
     <section class="demo-section">
       <h2 class="demo-section__title">DsFileUpload</h2>
-      <p class="demo-section__subtitle">드래그 앤 드롭 또는 클릭으로 파일을 업로드합니다.</p>
+      <p class="demo-section__subtitle">드래그 앤 드롭 또는 클릭으로 파일을 업로드합니다. 파일 확장자별 아이콘과 이미지 미리보기가 자동 표시됩니다.</p>
       <div class="demo-row" style="align-items: flex-start; gap: 3rem; flex-wrap: wrap;">
         <div class="demo-column" style="gap: var(--ds-spacing-3, 0.75rem); min-width: 280px;">
-          <p style="font-size: 0.75rem; color: var(--ds-on-surface-variant, #5a6970); margin: 0;">기본 (다중 파일)</p>
+          <p style="font-size: 0.75rem; color: var(--ds-on-surface-variant, #5a6970); margin: 0;">다중 파일 (확장자별 아이콘 표시)</p>
           <DsFileUpload v-model="basicFiles" multiple />
           <span class="demo-value">{{ basicFiles.length }}개 파일 선택됨</span>
         </div>

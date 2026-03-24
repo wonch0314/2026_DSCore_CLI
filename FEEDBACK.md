@@ -260,27 +260,32 @@ DsDescription
 ## 완료된 작업
 
 ### DsTransfer — 초성검색 추가
+
 - `DsTransfer.vue`에 한글 초성 분리/매칭 로직(`getChosung`, `isChosungOnly`, `matchesSearch`) 내장
 - "ㅅㅇㅈ" 입력 시 "사용자 조회", "사용자 생성" 등 자동 필터링
 - 기존 일반 검색(substring)도 그대로 동작
 - 샘플 페이지(AdvancedInputView)에 초성검색 안내 문구 및 코드 예시 추가
 
 ### DsCollapse — ▼/▲ 아이콘 변경
+
 - CSS `::before` 의 border 기반 화살표를 `content: '▼'` 텍스트 기반으로 변경
 - 열림 시 `transform: rotate(180deg)`로 ▲ 표시 (기존 애니메이션 유지)
 
 ### DsTabs — 샘플 페이지 데이터 유지 데모
+
 - 3개 탭: "입력 폼" (DsInput, DsSelect), "데이터 목록" (DsTable), "설정" (DsCheckbox, DsSelect)
 - 탭 전환 후에도 입력값/설정이 유지되는 것을 시연
 - 코드 예시 토글 추가
 
 ### DsTimeline — 다양한 상태 샘플
+
 - 기존: success만 사용 → 변경: success, warning, info, error, 기본(빈값) 모두 사용
 - 2가지 시나리오 병렬 표시: "주문 배송 추적" + "서버 배포 이력"
 - `DsTimeline.vue`에 type별 dot 색상 CSS 추가 (success=#16a34a, error=#d93025, warning=#f59e0b, info=#2563eb)
 - 코드 예시 토글 추가
 
 ### DsTable — 정렬 동작 + 로딩 시뮬레이션
+
 - 문제: 컴포넌트는 sort 이벤트만 emit하고 실제 정렬은 부모 책임 → 샘플에서 `computed`로 클라이언트 사이드 정렬 구현
 - `v-model:sort-key`, `v-model:sort-order` 바인딩으로 정렬 상태 동기화
 - 페이지 진입 시 `tableLoading=true`, 5초 후 데이터 표시 + DsSpinner 로딩 UI
@@ -288,6 +293,7 @@ DsDescription
 - 코드 예시 토글 추가
 
 ### 공통 — 코드 예시 블록
+
 - 각 섹션 하단에 "코드 보기/숨기기" 토글 버튼 추가
 - 다크 테마(#1e1e2e) 코드 블록에 사용 코드 표시
 
@@ -298,3 +304,256 @@ DsDescription
 - TagInput: 하단 배치 모드
 - Dropdown: hover 색상 차별화
 - Breadcrumb: 비링크 항목 cursor 확인
+
+---
+
+# Human (0324 1447)
+
+✦ 공통으로 빼야 할 것
+데이터 테이블
+정렬·고정 컬럼·다중 선택·페이지네이션. 콘텐츠 말고 회원·정산·로그 관리에도 동일 패턴
+어느 도메인이든 목록 관리엔 테이블
+필터 패널 & URL 쿼리 동기화
+필터 칩·멀티셀렉트·URL 직렬화 로직. 도메인마다 필드만 다를 뿐 패턴은 동일
+설정값만 주입하면 재사용 가능
+다단계 폼 (스텝퍼)
+단계 이동·유효성 체크·임시저장 흐름. 콘텐츠 등록 외에도 계약·캠페인 등록 등에서 재사용
+step 구조와 slot만 공통화
+이미지 업로드 & 크롭
+드래그앤드롭·비율 크롭·미리보기. 배너·아티스트 프로필 등 여러 도메인에서 동일하게 필요
+업로드 엔드포인트만 prop으로
+드래그 앤 드롭 순서 편집
+sortable list/grid 패턴. 홈 배너·카테고리·메뉴 순서 등 도메인 무관하게 반복 등장
+데이터 모델만 다르고 UX는 동일
+토스트 & 확인 다이얼로그
+성공·실패 피드백, 파괴적 액션 confirm. 전 도메인 공통 UX 패턴
+전역 상태로 관리
+권한 기반 UI 제어
+역할별 노출·disabled 처리. 콘텐츠 외 모든 관리 도메인에 동일하게 적용
+권한 로직을 한 곳에서 관리
+스켈레톤 & 에러 폴백
+레이아웃 타입(테이블·카드·폼)별 skeleton, API 에러 공통 UI
+어느 페이지든 로딩/오류 상태 필요
+
+지금 이헣게 피드백이 들어왔는데 공통으로 개발할 영역이 있을거야.
+공통 > dscore-ui-vue로 가고, 컨텐츠 관리 도메인은 content-domain으로 보낼거야.
+
+이걸 기준으로 계획표를 작성해봐줄래
+
+# AI (0324 1447)
+
+## 피드백 항목별 분석 — dscore-ui-vue 기존 구현 현황
+
+| #   | 피드백 항목                                           | 기존 컴포넌트         | 상태         | 비고                                                                 |
+| --- | ----------------------------------------------------- | --------------------- | ------------ | -------------------------------------------------------------------- |
+| 1   | 데이터 테이블 (정렬·고정 컬럼·다중 선택·페이지네이션) | DsTable, DsPagination | ⚠️ 부분 구현 | 정렬·다중선택·페이지네이션 ✅ / **고정 컬럼 미구현**                 |
+| 2   | 필터 패널 & URL 쿼리 동기화                           | DsSearchBar           | ⚠️ 부분 구현 | 검색 조건 폼 ✅ / **URL 쿼리 직렬화·필터 칩 미구현**                 |
+| 3   | 다단계 폼 (스텝퍼)                                    | DsSteps, DsForm       | ⚠️ 부분 구현 | 스텝 표시 ✅ 폼 유효성 ✅ / **스텝 이동 흐름·임시저장 미구현**       |
+| 4   | 이미지 업로드 & 크롭                                  | DsFileUpload          | ⚠️ 부분 구현 | 드래그앤드롭·파일검증 ✅ / **비율 크롭·이미지 미리보기 미구현**      |
+| 5   | 드래그 앤 드롭 순서 편집                              | —                     | ❌ 미구현    | sortable list/grid 패턴 전체 신규                                    |
+| 6   | 토스트 & 확인 다이얼로그                              | DsToast, DsConfirm    | ✅ 이미 구현 | success/error/warning/info 토스트 + Promise 기반 confirm             |
+| 7   | 권한 기반 UI 제어                                     | —                     | ❌ 미구현    | dscore-auth에 인증 모듈은 있으나 **UI 제어(v-permission 등)는 없음** |
+| 8   | 스켈레톤 & 에러 폴백                                  | DsSkeleton            | ⚠️ 부분 구현 | text/circular/rectangular 스켈레톤 ✅ / **에러 폴백 UI 미구현**      |
+
+---
+
+## 패키지 분류 계획
+
+### 📦 dscore-ui-vue (공통 컴포넌트 라이브러리)
+
+> 도메인에 무관하게 어디서든 재사용되는 UI 컴포넌트·컴포저블·유틸
+
+#### A. 기존 컴포넌트 보강 (Enhancement)
+
+| 우선순위 | 대상         | 작업 내용                                                             | 난이도 |
+| -------- | ------------ | --------------------------------------------------------------------- | ------ |
+| 🔴 높음  | DsTable      | 고정 컬럼(sticky column) 지원 추가                                    | 중간   |
+| 🔴 높음  | DsTable      | 내장 로딩 스피너 오버레이 (loading prop 활용)                         | 낮음   |
+| 🔴 높음  | DsFileUpload | 확장자별 아이콘 + 이미지 미리보기 + 좌우 레이아웃                     | 중간   |
+| 🟡 중간  | DsSearchBar  | 필터 칩 UI + 멀티셀렉트 필터 지원                                     | 중간   |
+| 🟡 중간  | DsSteps      | 스텝 이동 제어 API (next/prev/goTo + validation hook)                 | 중간   |
+| 🟡 중간  | DsSkeleton   | 레이아웃 타입별 프리셋 (table-skeleton, card-skeleton, form-skeleton) | 낮음   |
+
+#### B. 신규 공통 컴포넌트
+
+| 우선순위 | 컴포넌트        | 설명                                              | 난이도 |
+| -------- | --------------- | ------------------------------------------------- | ------ |
+| 🔴 높음  | DsSortableList  | 드래그 앤 드롭 순서 편집 (list/grid 모드)         | 높음   |
+| 🔴 높음  | DsImageCropper  | 비율 크롭 + 미리보기 (DsFileUpload 연동)          | 높음   |
+| 🔴 높음  | DsErrorFallback | API 에러 공통 UI (retry 버튼, 상태 코드별 메시지) | 낮음   |
+| 🟡 중간  | DsFilterChip    | 필터 조건 칩 (삭제 가능, DsSearchBar 연동)        | 낮음   |
+
+#### C. 신규 공통 컴포저블/유틸
+
+| 우선순위 | 이름              | 설명                                                | 난이도 |
+| -------- | ----------------- | --------------------------------------------------- | ------ |
+| 🔴 높음  | useUrlQuery       | URL 쿼리 파라미터 ↔ 필터 상태 양방향 동기화         | 중간   |
+| 🔴 높음  | usePermission     | 역할/권한 기반 UI 제어 (v-permission 디렉티브 포함) | 중간   |
+| 🟡 중간  | useDraftSave      | 폼 임시저장 (localStorage/sessionStorage 기반)      | 낮음   |
+| 🟡 중간  | useInfiniteScroll | 무한 스크롤 (선택적, 페이지네이션 대안)             | 낮음   |
+
+---
+
+### 📦 content-domain (콘텐츠 관리 도메인)
+
+> dscore-ui-vue 위에서 콘텐츠 관리 업무에 특화된 조합 컴포넌트·페이지 템플릿
+
+| 우선순위 | 컴포넌트/모듈     | 설명                                                                    | 의존성        |
+| -------- | ----------------- | ----------------------------------------------------------------------- | ------------- |
+| 🔴 높음  | ContentListPage   | 목록 페이지 템플릿 (DsSearchBar + DsTable + DsPagination + useUrlQuery) | dscore-ui-vue |
+| 🔴 높음  | ContentFormPage   | 등록/수정 폼 템플릿 (DsSteps + DsForm + useDraftSave)                   | dscore-ui-vue |
+| 🔴 높음  | ImageUploadField  | 이미지 업로드 필드 (DsFileUpload + DsImageCropper + 업로드 API 연동)    | dscore-ui-vue |
+| 🟡 중간  | BannerOrderEditor | 배너/카테고리 순서 편집 (DsSortableList + 저장 API)                     | dscore-ui-vue |
+| 🟡 중간  | ContentStatusFlow | 상태 전이 UI (심사중→승인→게시 등, DsStatusTag + DsTimeline 조합)       | dscore-ui-vue |
+| 🟢 낮음  | ContentDashboard  | 대시보드 (DsStatCard + 차트 + DsTable 조합)                             | dscore-ui-vue |
+
+---
+
+## 구현 로드맵
+
+```
+Phase 1 (1~2주) — 공통 기반 강화
+├── DsTable 고정 컬럼 + 로딩 스피너
+├── DsFileUpload 아이콘/미리보기/레이아웃
+├── DsErrorFallback 신규
+├── useUrlQuery 신규
+└── usePermission 신규 (+ v-permission 디렉티브)
+
+Phase 2 (2~3주) — 공통 신규 컴포넌트
+├── DsSortableList (드래그 앤 드롭)
+├── DsImageCropper
+├── DsFilterChip + DsSearchBar 연동
+├── DsSteps 이동 제어 API 보강
+└── DsSkeleton 프리셋 추가
+
+Phase 3 (3~4주) — content-domain 조합
+├── ContentListPage 템플릿
+├── ContentFormPage 템플릿
+├── ImageUploadField
+├── BannerOrderEditor
+└── ContentStatusFlow
+```
+
+---
+
+## 핵심 설계 원칙
+
+1. **dscore-ui-vue는 도메인을 모른다** — 순수 UI 컴포넌트 + 범용 컴포저블만. API 호출, 비즈니스 로직 없음
+2. **content-domain은 dscore-ui-vue를 조합한다** — 공통 컴포넌트를 slot/prop으로 조합하여 도메인 페이지 구성
+3. **설정값 주입 패턴** — content-domain에서 필드 정의, 엔드포인트, 권한 키 등을 설정 객체로 주입하면 공통 컴포넌트가 렌더링
+4. **다른 도메인(회원·정산·로그)도 같은 패턴** — content-domain과 동일한 구조로 `member-domain`, `settlement-domain` 등 확장 가능
+
+이 방향으로 진행할까요? 우선순위나 분류 조정이 필요하면 말씀해주세요.
+
+# Human (0324 1455)
+
+- 컨텐츠 도메인은 우선 sample-ui에 구현하도록 지시했어.
+- 공통 영역 컴포넌트 구현부터 진행해줘
+
+# AI
+
+## 완료된 작업 (0324 — 공통 컴포넌트 Phase 1)
+
+### 기존 컴포넌트 보강 (Enhancement)
+
+#### DsTable — 고정 컬럼 + 로딩 스피너
+
+- Column interface에 `fixed: 'left' | 'right'` 옵션 추가
+- 고정 컬럼 시 `position: sticky` + z-index 자동 적용, 다중 고정 컬럼 오프셋 자동 계산
+- 로딩 시 기존 데이터 위에 반투명 오버레이 + SVG 스피너 표시
+- 데이터 없는 상태에서 로딩 시 테이블 중앙에 스피너 표시
+
+#### DsFileUpload — 아이콘/미리보기/레이아웃
+
+- 확장자별 아이콘 매핑 (PDF/XLS/PPT/DOC/ZIP/CSV 등 11종, 색상 구분)
+- 이미지 파일 자동 감지 + `URL.createObjectURL()` 썸네일 미리보기 (40x40)
+- 파일 목록 레이아웃 개선: 좌(아이콘/썸네일) + 중앙(파일명/사이즈) + 우(삭제)
+
+#### DsSkeleton — 레이아웃 프리셋
+
+- `preset` prop 추가: `'table' | 'card' | 'form' | 'list'`
+- `rows` prop으로 행 수 조절 가능
+- 각 프리셋별 실제 레이아웃과 유사한 스켈레톤 구조 렌더링
+- 기존 단일 스켈레톤 기능 그대로 유지
+
+#### DsDropdown — hover 색상 차별화
+
+- hover: `color-mix(in srgb, accent 60%, transparent)` 적용으로 선택 상태와 구분
+- active/selected 항목은 기존 accent 색상 유지
+
+#### DsBreadcrumb — 비링크 항목 cursor 수정
+
+- 링크 없는 항목에 `pointer-events: none` 추가
+- hover 시 색상 변경/클릭 커서 완전 방지
+
+### 신규 공통 컴포넌트
+
+#### DsErrorFallback
+
+- API 에러 공통 UI 컴포넌트
+- HTTP 상태 코드별 기본 메시지 (400/403/404/500)
+- `status`, `title`, `description`, `showRetry` props
+- retry 이벤트 emit, slot으로 커스텀 콘텐츠 삽입 가능
+
+#### DsFilterChip
+
+- 필터 조건 칩 컴포넌트 (label:value 형태)
+- `closable` prop으로 삭제 버튼 표시
+- pill 스타일 (border-radius: 9999px)
+- DsSearchBar와 연동하여 활성 필터 표시 용도
+
+### 신규 공통 컴포저블
+
+#### useUrlQuery
+
+- URL 쿼리 파라미터 ↔ 필터 상태 양방향 동기화
+- `history.replaceState` 사용 (히스토리 오염 방지)
+- 디바운스 지원 (기본 300ms)
+- 배열/불리언/숫자 자동 직렬화/역직렬화
+- `reset()`, `setFilter()`, `getQueryString()` 메서드 제공
+
+#### usePermission + v-permission 디렉티브
+
+- 역할/권한 기반 UI 제어 시스템
+- `setupPermission()` — 앱 초기화 시 권한 설정
+- `updatePermissions()` — 로그인 후 동적 권한 업데이트
+- `usePermission()` 컴포저블 — `hasPermission()`, `hasRole()`, `hasAllPermissions()`
+- `v-permission` 디렉티브 — 요소 숨김 처리 (기본), `.disable` 수정자로 비활성화 처리
+- `PermissionPlugin` — `app.use()` 플러그인으로 전역 등록 가능
+
+---
+
+### 파일 변경 목록
+
+| 구분 | 파일 | 작업 |
+|------|------|------|
+| 보강 | `DsTable.vue` | 고정 컬럼 + 로딩 스피너 오버레이 |
+| 보강 | `DsFileUpload.vue` | 확장자 아이콘 + 이미지 미리보기 + 레이아웃 |
+| 보강 | `DsSkeleton.vue` | 프리셋 레이아웃 (table/card/form/list) |
+| 수정 | `DsDropdown.vue` | hover 색상 차별화 |
+| 수정 | `DsBreadcrumb.vue` | 비링크 cursor 수정 |
+| 신규 | `DsErrorFallback.vue` | API 에러 폴백 UI |
+| 신규 | `DsFilterChip.vue` | 필터 조건 칩 |
+| 신규 | `composables/useUrlQuery.ts` | URL 쿼리 동기화 |
+| 신규 | `composables/usePermission.ts` | 권한 기반 UI 제어 |
+| 신규 | `composables/index.ts` | 컴포저블 barrel export |
+| 수정 | `index.ts` | 신규 컴포넌트/컴포저블 export 추가 |
+
+---
+
+## 미완료 (다음 작업 후보)
+
+### Phase 2 — 공통 신규 컴포넌트
+
+- DsSortableList (드래그 앤 드롭 순서 편집)
+- DsImageCropper (비율 크롭 + 미리보기)
+- DsSteps 스텝 이동 제어 API 보강 (next/prev/goTo + validation hook)
+- DsSearchBar 필터 칩 연동 + 멀티셀렉트 지원
+
+### 기존 피드백 미처리 항목
+
+- DatePicker: 연도 이동(`<<` `>>`), CSS 스타일링 가이드, 프리셋/상대적 min-max
+- FileUpload: DsImageCropper 연동
+- TagInput: 하단 배치 모드
+- useDraftSave: 폼 임시저장 컴포저블
+- useInfiniteScroll: 무한 스크롤 컴포저블

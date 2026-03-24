@@ -59,8 +59,17 @@ export { default as DsTransfer } from './components/DsTransfer.vue'
 export { default as DsSearchBar } from './components/DsSearchBar.vue'
 export { default as DsActionBar } from './components/DsActionBar.vue'
 
+// Components - Phase 9 New Common
+export { default as DsErrorFallback } from './components/DsErrorFallback.vue'
+export { default as DsFilterChip } from './components/DsFilterChip.vue'
+
 // Plugin
 export { DsCore, useDsConfig } from './plugin'
 
 // Types
 export * from './types'
+
+// Composables
+export { useUrlQuery } from './composables'
+export type { UseUrlQueryOptions } from './composables'
+export { usePermission, setupPermission, updatePermissions, vPermission, PermissionPlugin } from './composables'

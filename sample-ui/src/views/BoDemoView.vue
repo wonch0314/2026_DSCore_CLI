@@ -16,7 +16,9 @@ import {
   DsPagination,
   DsModal,
   DsDrawer,
+  DsFilterChip,
 } from 'dscore-ui-vue'
+import { usePermission, setupPermission } from 'dscore-ui-vue'
 
 // Breadcrumb
 const breadcrumbItems = [
@@ -183,6 +185,7 @@ const bulkDelete = () => {
 // Search
 const handleSearch = () => {
   isSearching.value = true
+  addFilterChip()
   setTimeout(() => { isSearching.value = false }, 600)
   currentPage.value = 1
 }
@@ -191,6 +194,7 @@ const handleReset = () => {
   searchName.value = ''
   searchStatus.value = null
   searchDateRange.value = { start: '', end: '' }
+  activeFilters.value = []
   currentPage.value = 1
 }
 
@@ -198,6 +202,43 @@ const handleReset = () => {
 const handleExcelDownload = () => {
   alert('엑셀 다운로드 기능 (실제 구현 필요)')
 }
+
+// --- Filter Chips ---
+const activeFilters = ref<{ key: string; label: string; value: string }[]>([])
+
+const addFilterChip = () => {
+  if (searchName.value) {
+    activeFilters.value = activeFilters.value.filter(f => f.key !== 'name')
+    activeFilters.value.push({ key: 'name', label: '이름', value: searchName.value })
+  }
+  if (searchStatus.value) {
+    activeFilters.value = activeFilters.value.filter(f => f.key !== 'status')
+    const label = statusOptions.find(o => o.value === searchStatus.value)?.label ?? String(searchStatus.value)
+    activeFilters.value.push({ key: 'status', label: '상태', value: label })
+  }
+}
+
+const removeFilter = (key: string) => {
+  activeFilters.value = activeFilters.value.filter(f => f.key !== key)
+  if (key === 'name') searchName.value = ''
+  if (key === 'status') searchStatus.value = null
+}
+
+const clearAllFilters = () => {
+  activeFilters.value = []
+  handleReset()
+}
+
+// --- Permission Demo ---
+// Setup demo permissions
+setupPermission({
+  permissions: ['user.read', 'user.create', 'user.edit'],
+  roles: ['admin'],
+})
+
+const { hasPermission } = usePermission()
+const canDelete = computed(() => hasPermission('user.delete'))
+const canExport = computed(() => hasPermission('user.export'))
 </script>
 
 <template>
@@ -239,19 +280,41 @@ const handleExcelDownload = () => {
       </DsSearchBar>
     </div>
 
+    <!-- Active Filter Chips -->
+    <div v-if="activeFilters.length > 0" style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: var(--ds-spacing-4, 1rem);">
+      <span style="font-size: 0.75rem; color: var(--ds-on-surface-variant, #5a6970);">활성 필터:</span>
+      <DsFilterChip
+        v-for="filter in activeFilters"
+        :key="filter.key"
+        :label="filter.label"
+        @close="removeFilter(filter.key)"
+      >
+        {{ filter.value }}
+      </DsFilterChip>
+      <button
+        style="font-size: 0.75rem; color: var(--ds-on-surface-variant, #5a6970); background: none; border: none; cursor: pointer; text-decoration: underline;"
+        @click="clearAllFilters"
+      >
+        전체 해제
+      </button>
+    </div>
+
     <!-- Action Bar -->
     <DsActionBar :selected-count="selectedRows.length">
       <template #default>
         <DsButton @click="openAdd">추가</DsButton>
         <DsButton
           class="ds-button--secondary"
-          :disabled="selectedRows.length === 0"
+          :disabled="selectedRows.length === 0 || !canDelete"
           @click="bulkDelete"
+          :style="!canDelete ? 'opacity: 0.5' : ''"
         >
           선택 삭제{{ selectedRows.length > 0 ? ` (${selectedRows.length})` : '' }}
+          <span v-if="!canDelete" style="font-size: 0.625rem; margin-left: 0.25rem;">(권한 없음)</span>
         </DsButton>
-        <DsButton class="ds-button--secondary" @click="handleExcelDownload">
+        <DsButton class="ds-button--secondary" :disabled="!canExport" @click="handleExcelDownload" :style="!canExport ? 'opacity: 0.5' : ''">
           엑셀 다운로드
+          <span v-if="!canExport" style="font-size: 0.625rem; margin-left: 0.25rem;">(권한 없음)</span>
         </DsButton>
       </template>
     </DsActionBar>

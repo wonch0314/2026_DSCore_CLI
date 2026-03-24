@@ -7,6 +7,8 @@ interface Props {
   width?: string | number
   height?: string | number
   animation?: 'pulse' | 'wave' | 'none'
+  preset?: 'table' | 'card' | 'form' | 'list'
+  rows?: number
   applyDefaultStyle?: boolean
 }
 
@@ -35,7 +37,50 @@ const getStyle = () => {
 </script>
 
 <template>
+  <!-- Preset mode -->
+  <div v-if="preset" :class="[isStyled && 'ds-skeleton-preset', isStyled && `ds-skeleton-preset--${preset}`]">
+    <!-- Table preset -->
+    <template v-if="preset === 'table'">
+      <div :class="isStyled && 'ds-skeleton-preset__table-header'">
+        <span v-for="i in 4" :key="i" :class="[isStyled && 'ds-skeleton', isStyled && 'ds-skeleton--text', isStyled && `ds-skeleton--${animation}`]" :style="{ width: `${15 + i * 5}%`, height: '1rem' }" />
+      </div>
+      <div v-for="r in (rows ?? 5)" :key="r" :class="isStyled && 'ds-skeleton-preset__table-row'">
+        <span v-for="i in 4" :key="i" :class="[isStyled && 'ds-skeleton', isStyled && 'ds-skeleton--text', isStyled && `ds-skeleton--${animation}`]" :style="{ width: `${15 + i * 5}%`, height: '0.85rem' }" />
+      </div>
+    </template>
+
+    <!-- Card preset -->
+    <template v-if="preset === 'card'">
+      <span :class="[isStyled && 'ds-skeleton', isStyled && 'ds-skeleton--rectangular', isStyled && `ds-skeleton--${animation}`]" style="width: 100%; height: 120px;" />
+      <div :class="isStyled && 'ds-skeleton-preset__card-body'">
+        <span :class="[isStyled && 'ds-skeleton', isStyled && 'ds-skeleton--text', isStyled && `ds-skeleton--${animation}`]" style="width: 60%; height: 1.125rem;" />
+        <span v-for="r in (rows ?? 3)" :key="r" :class="[isStyled && 'ds-skeleton', isStyled && 'ds-skeleton--text', isStyled && `ds-skeleton--${animation}`]" :style="{ width: r === (rows ?? 3) ? '40%' : '100%', height: '0.85rem' }" />
+      </div>
+    </template>
+
+    <!-- Form preset -->
+    <template v-if="preset === 'form'">
+      <div v-for="r in (rows ?? 4)" :key="r" :class="isStyled && 'ds-skeleton-preset__form-row'">
+        <span :class="[isStyled && 'ds-skeleton', isStyled && 'ds-skeleton--text', isStyled && `ds-skeleton--${animation}`]" style="width: 80px; height: 0.85rem;" />
+        <span :class="[isStyled && 'ds-skeleton', isStyled && 'ds-skeleton--rectangular', isStyled && `ds-skeleton--${animation}`]" style="width: 100%; height: 2.25rem;" />
+      </div>
+    </template>
+
+    <!-- List preset -->
+    <template v-if="preset === 'list'">
+      <div v-for="r in (rows ?? 5)" :key="r" :class="isStyled && 'ds-skeleton-preset__list-row'">
+        <span :class="[isStyled && 'ds-skeleton', isStyled && 'ds-skeleton--circular', isStyled && `ds-skeleton--${animation}`]" style="width: 36px; height: 36px;" />
+        <div :class="isStyled && 'ds-skeleton-preset__list-text'">
+          <span :class="[isStyled && 'ds-skeleton', isStyled && 'ds-skeleton--text', isStyled && `ds-skeleton--${animation}`]" style="width: 40%; height: 0.85rem;" />
+          <span :class="[isStyled && 'ds-skeleton', isStyled && 'ds-skeleton--text', isStyled && `ds-skeleton--${animation}`]" style="width: 70%; height: 0.75rem;" />
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <!-- Single skeleton mode (existing behavior) -->
   <span
+    v-else
     :class="[
       isStyled && 'ds-skeleton',
       isStyled && `ds-skeleton--${variant}`,
@@ -99,5 +144,54 @@ const getStyle = () => {
   @keyframes ds-skeleton-wave {
     0%   { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
+  }
+
+  .ds-skeleton-preset {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .ds-skeleton-preset__table-header {
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+  }
+
+  .ds-skeleton-preset__table-row {
+    display: flex;
+    gap: 1rem;
+    padding: 0.625rem 0.5rem;
+    border-bottom: 1px solid var(--ds-border, rgba(0,0,0,0.06));
+  }
+
+  .ds-skeleton-preset__card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .ds-skeleton-preset__form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    margin-bottom: 1rem;
+  }
+
+  .ds-skeleton-preset__list-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--ds-border, rgba(0,0,0,0.06));
+  }
+
+  .ds-skeleton-preset__list-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    flex: 1;
   }
 </style>

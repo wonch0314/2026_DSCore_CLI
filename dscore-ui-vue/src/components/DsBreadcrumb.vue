@@ -102,6 +102,7 @@ function hasRouterLink(item: BreadcrumbItem) {
 
   .ds-breadcrumb__link--plain {
     cursor: default;
+    pointer-events: none;
   }
 
   .ds-breadcrumb__current {

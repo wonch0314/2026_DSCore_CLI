@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onUnmounted } from 'vue'
 import { useDsConfig } from '../plugin'
 
 interface Props {
@@ -38,6 +38,57 @@ const formatSize = (bytes: number): string => {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
+
+const getFileIcon = (file: File): { label: string; color: string } => {
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
+  const map: Record<string, { label: string; color: string }> = {
+    pdf: { label: 'PDF', color: '#d93025' },
+    xlsx: { label: 'XLS', color: '#0f9d58' },
+    xls: { label: 'XLS', color: '#0f9d58' },
+    csv: { label: 'CSV', color: '#0f9d58' },
+    pptx: { label: 'PPT', color: '#f4511e' },
+    ppt: { label: 'PPT', color: '#f4511e' },
+    docx: { label: 'DOC', color: '#4285f4' },
+    doc: { label: 'DOC', color: '#4285f4' },
+    zip: { label: 'ZIP', color: '#f9ab00' },
+    rar: { label: 'RAR', color: '#f9ab00' },
+    '7z': { label: '7Z', color: '#f9ab00' },
+  }
+  return map[ext] ?? { label: 'FILE', color: '#717182' }
+}
+
+const isImageFile = (file: File): boolean => {
+  if (file.type.startsWith('image/')) return true
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
+  return ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'bmp'].includes(ext)
+}
+
+const previews = ref<Map<string, string>>(new Map())
+
+const getPreviewKey = (file: File, index: number): string => `${file.name}-${file.size}-${index}`
+
+watch(() => props.modelValue, (newFiles, oldFiles) => {
+  // Revoke old URLs
+  const newKeys = new Set((newFiles ?? []).map((f, i) => getPreviewKey(f, i)))
+  previews.value.forEach((url, key) => {
+    if (!newKeys.has(key)) {
+      URL.revokeObjectURL(url)
+      previews.value.delete(key)
+    }
+  })
+  // Create new URLs for images
+  ;(newFiles ?? []).forEach((file, index) => {
+    const key = getPreviewKey(file, index)
+    if (isImageFile(file) && !previews.value.has(key)) {
+      previews.value.set(key, URL.createObjectURL(file))
+    }
+  })
+}, { immediate: true, deep: true })
+
+onUnmounted(() => {
+  previews.value.forEach(url => URL.revokeObjectURL(url))
+  previews.value.clear()
+})
 
 const isAccepted = (file: File): boolean => {
   if (!props.accept) return true
@@ -167,6 +218,21 @@ const removeFile = (index: number) => {
         :key="index"
         :class="isStyled && 'ds-file-upload__file'"
       >
+        <!-- Image preview -->
+        <img
+          v-if="isImageFile(file) && previews.get(getPreviewKey(file, index))"
+          :src="previews.get(getPreviewKey(file, index))"
+          :alt="file.name"
+          :class="isStyled && 'ds-file-upload__file-preview'"
+        />
+        <!-- File type icon -->
+        <span
+          v-else
+          :class="isStyled && 'ds-file-upload__file-icon'"
+          :style="{ background: getFileIcon(file).color }"
+        >
+          {{ getFileIcon(file).label }}
+        </span>
         <div :class="isStyled && 'ds-file-upload__file-info'">
           <span :class="isStyled && 'ds-file-upload__file-name'">{{ file.name }}</span>
           <span :class="isStyled && 'ds-file-upload__file-size'">{{ formatSize(file.size) }}</span>
@@ -258,21 +324,48 @@ const removeFile = (index: number) => {
 
   .ds-file-upload__file {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 0.75rem;
     padding: 0.5rem 0;
     border-bottom: 1px solid var(--ds-border, rgba(0,0,0,0.1));
+  }
+
+  .ds-file-upload__file-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.625rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
+  }
+
+  .ds-file-upload__file-preview {
+    width: 40px;
+    height: 40px;
+    border-radius: 0.375rem;
+    object-fit: cover;
+    flex-shrink: 0;
   }
 
   .ds-file-upload__file-info {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.125rem;
+    flex: 1;
+    min-width: 0;
   }
 
   .ds-file-upload__file-name {
     font-size: 0.875rem;
     color: var(--ds-foreground, #1a1a1a);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .ds-file-upload__file-size {

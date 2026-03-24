@@ -7,6 +7,7 @@ interface Column {
   label: string
   sortable?: boolean
   width?: string
+  fixed?: 'left' | 'right'
 }
 
 interface Props {
@@ -150,6 +151,27 @@ const getSortClass = (column: Column) => {
   return `ds-table__sort ds-table__sort--${internalSortOrder.value}`
 }
 
+const getFixedStyle = (column: Column, colIndex: number) => {
+  if (!column.fixed) return undefined
+  const style: Record<string, string> = {
+    position: 'sticky',
+    zIndex: column.fixed === 'left' ? '2' : '1',
+    background: 'inherit',
+  }
+  if (column.fixed === 'left') {
+    let left = 0
+    for (let i = 0; i < colIndex; i++) {
+      if (props.columns[i]?.fixed === 'left') {
+        left += parseInt(props.columns[i]?.width || '120', 10)
+      }
+    }
+    style.left = props.selectable && colIndex === 0 ? '44px' : `${left}px`
+  } else {
+    style.right = '0'
+  }
+  return style
+}
+
 const isEmpty = computed(() => !props.loading && props.data.length === 0)
 </script>
 
@@ -170,7 +192,7 @@ const isEmpty = computed(() => !props.loading && props.data.length === 0)
             v-for="column in columns"
             :key="column.key"
             :class="[isStyled && 'ds-table__header', isStyled && getSortClass(column), isStyled && sortable && column.sortable && 'ds-table__header--sortable']"
-            :style="column.width ? { width: column.width } : undefined"
+            :style="[column.width ? { width: column.width } : undefined, getFixedStyle(column, columns.indexOf(column))]"
             @click="handleHeaderClick(column)"
           >
             <slot :name="`header-${column.key}`" :column="column">
@@ -186,14 +208,17 @@ const isEmpty = computed(() => !props.loading && props.data.length === 0)
       </thead>
 
       <tbody :class="isStyled && 'ds-table__body'">
-        <template v-if="loading">
+        <template v-if="loading && data.length === 0">
           <tr :class="[isStyled && 'ds-table__row', isStyled && 'ds-table__row--loading']">
             <td
               :colspan="selectable ? columns.length + 1 : columns.length"
               :class="[isStyled && 'ds-table__cell', isStyled && 'ds-table__cell--loading']"
             >
               <slot name="loading">
-                <span>Loading...</span>
+                <svg :class="isStyled && 'ds-table__spinner'" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10" opacity="0.25" />
+                  <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round" />
+                </svg>
               </slot>
             </td>
           </tr>
@@ -231,6 +256,7 @@ const isEmpty = computed(() => !props.loading && props.data.length === 0)
                 v-for="column in columns"
                 :key="column.key"
                 :class="isStyled && 'ds-table__cell'"
+                :style="getFixedStyle(column, columns.indexOf(column))"
               >
                 <slot
                   :name="`cell-${column.key}`"
@@ -246,6 +272,12 @@ const isEmpty = computed(() => !props.loading && props.data.length === 0)
         </template>
       </tbody>
     </table>
+    <div v-if="loading && data.length > 0" :class="isStyled && 'ds-table__loading-overlay'">
+      <svg :class="isStyled && 'ds-table__spinner'" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10" opacity="0.25" />
+        <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round" />
+      </svg>
+    </div>
   </div>
 </template>
 
@@ -355,5 +387,25 @@ const isEmpty = computed(() => !props.loading && props.data.length === 0)
     width: 44px;
     white-space: nowrap;
     text-align: center;
+  }
+
+  .ds-table__loading-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 3;
+  }
+
+  .ds-table__spinner {
+    animation: ds-table-spin 1s linear infinite;
+    color: var(--ds-primary, #030213);
+  }
+
+  @keyframes ds-table-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
 </style>

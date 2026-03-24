@@ -9,6 +9,7 @@ const routes = [
   { path: '/overlay', name: 'overlay', component: () => import('../views/OverlayView.vue') },
   { path: '/advanced-input', name: 'advanced-input', component: () => import('../views/AdvancedInputView.vue') },
   { path: '/bo-demo', name: 'bo-demo', component: () => import('../views/BoDemoView.vue') },
+  { path: '/content-management', name: 'content-management', component: () => import('../views/ContentManagementView.vue') },
 ]
 
 export default createRouter({
